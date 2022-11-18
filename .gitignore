@@ -1,0 +1,10 @@
+﻿################################################################################
+# この .gitignore ファイルは Microsoft(R) Visual Studio によって自動的に作成されました。
+################################################################################
+
+/.vs
+/MVVMCore/bin/Debug/net5.0-windows
+/MVVMCore/obj/Debug/net5.0-windows
+/MVVMCore/obj
+/ZeikomiTango/bin/Debug/net6.0-windows
+/ZeikomiTango/obj

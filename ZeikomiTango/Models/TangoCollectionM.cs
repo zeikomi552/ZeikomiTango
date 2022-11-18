@@ -1,10 +1,14 @@
-﻿using MVVMCore.BaseClass;
+﻿using DocumentFormat.OpenXml.Drawing.Charts;
+using DocumentFormat.OpenXml.Presentation;
+using MVVMCore.BaseClass;
 using MVVMCore.Common.Utilities;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Threading;
 
 namespace ZeikomiTango.Models
 {
@@ -14,18 +18,40 @@ namespace ZeikomiTango.Models
         Answer
     }
 
-
-
     public class TangoCollectionM : ModelBase
     {
-
+        #region 表示タイプ
+        /// <summary>
+        /// 表示タイプ
+        /// </summary>
         DisplayType _DisplayType = DisplayType.Question;
+        #endregion
+
+        #region タイマー用インスタンス
+        /// <summary>
+        /// タイマー用インスタンス
+        /// </summary>
+        private DispatcherTimer _Timer;
+        #endregion
+
+        #region コンストラクタ
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public TangoCollectionM()
+        {
+            // タイマのインスタンスを生成
+            _Timer = new DispatcherTimer();                         // 優先度はDispatcherPriority.Background
+            _Timer.Interval = new TimeSpan(0, 0, this.Interval);    // インターバルを設定
+            _Timer.Tick += new EventHandler(TimerMethod!);          // タイマメソッドを設定
+        }
+        #endregion
 
         #region 表示[Display]プロパティ
         /// <summary>
         /// 表示[Display]プロパティ用変数
         /// </summary>
-        string _Display = string.Empty;
+        string _Display = "ファイルをドロップ";
         /// <summary>
         /// 表示[Display]プロパティ
         /// </summary>
@@ -87,16 +113,93 @@ namespace ZeikomiTango.Models
             }
             set
             {
-                if (!_Interval.Equals(value))
+                if (!_Interval.Equals(value) && value > 0)
                 {
                     _Interval = value;
+                    this._Timer.Interval = new TimeSpan(0, 0, value);
                     NotifyPropertyChanged("Interval");
                 }
             }
         }
         #endregion
 
+        #region 繰り返し[IsRepeat]プロパティ
+        /// <summary>
+        /// 繰り返し[IsRepeat]プロパティ用変数
+        /// </summary>
+        bool _IsRepeat = false;
+        /// <summary>
+        /// 繰り返し[IsRepeat]プロパティ
+        /// </summary>
+        public bool IsRepeat
+        {
+            get
+            {
+                return _IsRepeat;
+            }
+            set
+            {
+                if (!_IsRepeat.Equals(value))
+                {
+                    _IsRepeat = value;
+                    NotifyPropertyChanged("IsRepeat");
+                }
+            }
+        }
+        #endregion
 
+        #region ランダム[IsRandom]プロパティ
+        /// <summary>
+        /// ランダム[IsRandom]プロパティ用変数
+        /// </summary>
+        bool _IsRandom = false;
+        /// <summary>
+        /// ランダム[IsRandom]プロパティ
+        /// </summary>
+        public bool IsRandom
+        {
+            get
+            {
+                return _IsRandom;
+            }
+            set
+            {
+                if (!_IsRandom.Equals(value))
+                {
+                    _IsRandom = value;
+                    NotifyPropertyChanged("IsRandom");
+                }
+            }
+        }
+        #endregion
+
+        #region フォントサイズ[FontSize]プロパティ
+        /// <summary>
+        /// フォントサイズ[FontSize]プロパティ用変数
+        /// </summary>
+        int _FontSize = 25;
+        /// <summary>
+        /// フォントサイズ[FontSize]プロパティ
+        /// </summary>
+        public int FontSize
+        {
+            get
+            {
+                return _FontSize;
+            }
+            set
+            {
+                if (!_FontSize.Equals(value) && _FontSize > 0)
+                {
+                    _FontSize = value;
+                    NotifyPropertyChanged("FontSize");
+                }
+            }
+        }
+        #endregion
+
+
+        #region 表示タイプの切り替え
         /// <summary>
         /// 表示タイプの切り替え
         /// </summary>
@@ -104,53 +207,78 @@ namespace ZeikomiTango.Models
         {
             this._DisplayType = this._DisplayType == DisplayType.Question ? DisplayType.Answer : DisplayType.Question;
         }
+        #endregion
 
+        #region 表示切替
         /// <summary>
         /// 表示切替
         /// </summary>
         /// <param name="next_f">true:次へ false:前へ</param>
         public void ChangeDisplay(bool next_f)
         {
+            // インデックスの取得
             int index = GetIndex();
 
-            if (next_f) // 次へ移動
+            // ファイルが読み込まれている状態
+            if (this.TangoList.Items.Count > 0 && this.TangoList.SelectedItem != null)
             {
-                if (this.TangoList.Items.Count > 0 && this.TangoList.SelectedItem != null)
+                if (next_f) // 次へ移動
                 {
-                    if (index >= 0 && (this.TangoList.Items.Count - 1 > index || this._DisplayType == DisplayType.Question) )
+                    if (index >= 0 && (this.TangoList.Items.Count - 1 > index || this._DisplayType == DisplayType.Question))
                     {
                         ChangeDisplayType();    // 表示タイプの切替
-                        if (this._DisplayType == DisplayType.Question)
+                        if (this._DisplayType == DisplayType.Question)  // 質問表示状態
                         {
                             this.TangoList.SelectedItem = this.TangoList.Items.ElementAt(index + 1);    // 要素の切替
-                            this.Display = this.TangoList.SelectedItem.DisplayQuestion;
+                            this.Display = this.TangoList.SelectedItem.DisplayQuestion;                 // 質問のセット
                         }
                         else
                         {
-                            this.Display = this.TangoList.SelectedItem.DisplayAnswer;
+                            this.Display = this.TangoList.SelectedItem.DisplayAnswer;                   // 回答のセット
+                        }
+                    }
+                    else
+                    {
+                        // 繰り返し
+                        if (this.IsRepeat)
+                        {
+                            SelectFirst();  // 最初を選択
                         }
                     }
                 }
-            }
-            else
-            {
-                if (this.TangoList.Items.Count > 0 && this.TangoList.SelectedItem != null)
+                else
                 {
                     if (index > 0 || _DisplayType == DisplayType.Answer)
                     {
                         ChangeDisplayType();    // 表示タイプの切替
-                        if (this._DisplayType == DisplayType.Answer)
+                        if (this._DisplayType == DisplayType.Answer)    // 回答表示状態
                         {
-                            this.TangoList.SelectedItem = this.TangoList.Items.ElementAt(index - 1);
-                            this.Display = this.TangoList.SelectedItem.DisplayAnswer;
+                            this.TangoList.SelectedItem = this.TangoList.Items.ElementAt(index - 1);    // 要素の切替
+                            this.Display = this.TangoList.SelectedItem.DisplayAnswer;                   // 回答のセット
                         }
                         else
                         {
-                            this.Display = this.TangoList.SelectedItem.DisplayQuestion;
+                            this.Display = this.TangoList.SelectedItem.DisplayQuestion;                 // 質問のセット
+                        }
+                    }
+                    else
+                    {
+                        if (this.IsRepeat)
+                        {
+                            SelectLast();           // 最後を選択
+                            ChangeDisplay(true);    // 問題文→回答文への切替
                         }
                     }
                 }
             }
+        }
+        #endregion
+
+        public void SelectItem(int index)
+        {
+            this.TangoList.SelectedItem = this.TangoList.Items.ElementAt(index);    // 要素の切替
+            this.Display = this.TangoList.SelectedItem.DisplayQuestion;                 // 質問のセット
+            this._DisplayType = DisplayType.Question;
         }
 
         #region 単語リスト[TangoList]プロパティ
@@ -178,6 +306,7 @@ namespace ZeikomiTango.Models
         }
         #endregion
 
+        #region 最初の項目を選択する
         /// <summary>
         /// 最初の項目を選択する
         /// </summary>
@@ -190,7 +319,9 @@ namespace ZeikomiTango.Models
                 this.Display = this.TangoList.SelectedItem.DisplayQuestion;
             }
         }
+        #endregion
 
+        #region 最後の項目を選択する
         /// <summary>
         /// 最後の項目を選択する
         /// </summary>
@@ -203,15 +334,35 @@ namespace ZeikomiTango.Models
                 this.Display = this.TangoList.SelectedItem.DisplayQuestion;
             }
         }
+        #endregion
 
+        Random _Rand = new Random();
+        #region 次のアイテムを選択する
         /// <summary>
         /// 次のアイテムを選択する
         /// </summary>
         public void SelectNext()
         {
-            ChangeDisplay(true);
+            if (this.IsRandom)
+            {
+                if(this._DisplayType == DisplayType.Answer)
+                {
+                    var index = _Rand.Next(0, this.TangoList.Items.Count);
+                    SelectItem(index);  // アイテムの選択
+                }
+                else
+                {
+                    ChangeDisplay(true);
+                }
+            }
+            else
+            {
+                ChangeDisplay(true);
+            }
         }
+        #endregion
 
+        #region 前のアイテムを選択する
         /// <summary>
         /// 前のアイテムを選択する
         /// </summary>
@@ -219,7 +370,9 @@ namespace ZeikomiTango.Models
         {
             ChangeDisplay(false);
         }
+        #endregion
 
+        #region インデックスの取得処理
         /// <summary>
         /// インデックスの取得処理
         /// </summary>
@@ -235,17 +388,45 @@ namespace ZeikomiTango.Models
                 return -1;
             }
         }
+        #endregion
 
+        #region タイマーメソッド
+        /// <summary>
+        /// タイマーメソッド
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void TimerMethod(object sender, EventArgs e)
+        {
+            this.SelectNext();
+        }
+        #endregion
+
+        #region 自動実行
+        /// <summary>
+        /// 自動実行
+        /// </summary>
         public void Auto()
         {
-            Task.Run(() =>
+            if (this.IsAuto)
             {
-                while (this.IsAuto)
-                {
-                    System.Threading.Thread.Sleep(this.Interval * 1000);
-                    this.SelectNext();
-                }
-            });
+                _Timer.Start(); // タイマー開始
+            }
+            else
+            {
+                _Timer.Stop();  // タイマー終了
+            }
         }
+        #endregion
+
+        #region タイマーを停止
+        /// <summary>
+        /// タイマーを停止
+        /// </summary>
+        public void StopTimer()
+        {
+            _Timer.Stop();
+        }
+        #endregion
     }
 }

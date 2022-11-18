@@ -10,54 +10,89 @@
     <Window.DataContext>
         <ViewModels:MainWindowVM/>
     </Window.DataContext>
+    <b:Interaction.Triggers>
+        <b:EventTrigger EventName="Closing">
+            <b:CallMethodAction TargetObject="{Binding TangoCollection}" MethodName="StopTimer"/>
+        </b:EventTrigger>
+    </b:Interaction.Triggers>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
         <b:Interaction.Triggers>
             <b:EventTrigger EventName="Loaded">
                 <b:CallMethodAction TargetObject="{Binding}" MethodName="Init"/>
             </b:EventTrigger>
         </b:Interaction.Triggers>
-        <StackPanel Orientation="Horizontal">
-            <Button Width="100" Height="100" Margin="5" Content="ファイルの読み込み">
+        
+        <GroupBox Header="単語帳" Margin="5">
+            <Grid>
+                <TextBlock Margin="5" AllowDrop="True" x:Name="DisplayArea" FontSize="{Binding TangoCollection.FontSize}" Text="{Binding TangoCollection.Display}" TextWrapping="WrapWithOverflow"/>
+            </Grid>
+        </GroupBox>
+        
+        <StackPanel Margin="5" Grid.Row="1" Orientation="Horizontal">
+            <Button Width="35" Margin="5" Content="最初">
                 <b:Interaction.Triggers>
                     <b:EventTrigger EventName="Click">
-                        <b:CallMethodAction TargetObject="{Binding}" MethodName="ReadExcel"/>
+                        <b:CallMethodAction TargetObject="{Binding TangoCollection}" MethodName="SelectFirst"/>
                     </b:EventTrigger>
                 </b:Interaction.Triggers>
             </Button>
-            <Button Width="100" Height="100" Margin="5" Content="←">
+            <Button Width="35" Margin="5" Content="←">
                 <b:Interaction.Triggers>
                     <b:EventTrigger EventName="Click">
                         <b:CallMethodAction TargetObject="{Binding TangoCollection}" MethodName="SelectPrev"/>
                     </b:EventTrigger>
                 </b:Interaction.Triggers>
             </Button>
-            <Button Width="100" Height="100" Margin="5" Content="→">
-                <b:Interaction.Triggers>
-                    <b:EventTrigger EventName="Click">
-                        <b:CallMethodAction TargetObject="{Binding TangoCollection}" MethodName="SelectNext"/>
-                    </b:EventTrigger>
-                </b:Interaction.Triggers>
-            </Button>
-            <ToggleButton Width="100" Height="100" Content="自動" IsChecked="{Binding TangoCollection.IsAuto}">
+            <ToggleButton Width="35" Margin="5" Content="自動" IsChecked="{Binding TangoCollection.IsAuto}">
                 <b:Interaction.Triggers>
                     <b:EventTrigger EventName="Click">
                         <b:CallMethodAction TargetObject="{Binding TangoCollection}" MethodName="Auto"/>
                     </b:EventTrigger>
                 </b:Interaction.Triggers>
             </ToggleButton>
-            <StackPanel Margin="5" VerticalAlignment="Center">
-                <TextBlock Text="インターバル"/>
-                <TextBox TextAlignment="Center" Text="{Binding TangoCollection.Interval}"/>
+            <Button Width="35" Margin="5" Content="→">
+                <b:Interaction.Triggers>
+                    <b:EventTrigger EventName="Click">
+                        <b:CallMethodAction TargetObject="{Binding TangoCollection}" MethodName="SelectNext"/>
+                    </b:EventTrigger>
+                </b:Interaction.Triggers>
+            </Button>
+            <Button Width="35" Margin="5" Content="最後">
+                <b:Interaction.Triggers>
+                    <b:EventTrigger EventName="Click">
+                        <b:CallMethodAction TargetObject="{Binding TangoCollection}" MethodName="SelectLast"/>
+                    </b:EventTrigger>
+                </b:Interaction.Triggers>
+            </Button>
+            <Grid>
+                <StackPanel Orientation="Horizontal">
+                    <StackPanel>
+                        <TextBlock HorizontalAlignment="Center" Text="インターバル"/>
+                        <Slider VerticalAlignment="Center" Margin="5,0" Minimum="1" Maximum="60" Width="100" IsSnapToTickEnabled="True" SmallChange="1" LargeChange="1" TickFrequency="1" Value="{Binding TangoCollection.Interval}"/>
+                    </StackPanel>
+                    <TextBox Width="30" VerticalAlignment="Center" TextAlignment="Center" Text="{Binding TangoCollection.Interval}"/>
+                </StackPanel>
+            </Grid>
+            <Grid>
+                <StackPanel Orientation="Horizontal">
+                    <StackPanel>
+                        <TextBlock HorizontalAlignment="Center" Text="フォントサイズ"/>
+                        <Slider VerticalAlignment="Center" Margin="5,0" Minimum="1" Maximum="60" Width="100" IsSnapToTickEnabled="True" SmallChange="1" LargeChange="1" TickFrequency="1" Value="{Binding TangoCollection.FontSize}"/>
+                    </StackPanel>
+                    <TextBox Width="30" VerticalAlignment="Center" TextAlignment="Center" Text="{Binding TangoCollection.FontSize}"/>
+                </StackPanel>
+            </Grid>
+            
+            <StackPanel VerticalAlignment="Center" Margin="5">
+                <CheckBox Content="リピート" IsChecked="{Binding TangoCollection.IsRepeat}"/>
+                <CheckBox Content="ランダム" IsChecked="{Binding TangoCollection.IsRandom}"/>
             </StackPanel>
-        </StackPanel>
 
-        <GroupBox Header="単語帳" Grid.Row="1" Margin="5">
-            <TextBlock FontSize="40" Text="{Binding TangoCollection.Display}" TextWrapping="WrapWithOverflow"/>
-        </GroupBox>
+        </StackPanel>
 
     </Grid>
 </Window>
