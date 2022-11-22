@@ -15,7 +15,24 @@ namespace MVVMCore.Common.Utilities
 
 	public class ModelList<T> : INotifyPropertyChanged, IModeList
 	{
-		public IEnumerator<T> GetEnumerator()
+		/// <summary>
+		/// コンストラクタ
+		/// </summary>
+		public ModelList()
+		{
+
+		}
+
+		/// <summary>
+		/// コンストラクタ
+		/// </summary>
+		/// <param name="item">初期化用リスト</param>
+		public ModelList(IEnumerable<T> item)
+		{
+			this.Items = new ObservableCollection<T>(item);
+		}
+
+        public IEnumerator<T> GetEnumerator()
 		{
 			foreach (var item in this.Items)
 			{
@@ -159,7 +176,41 @@ namespace MVVMCore.Common.Utilities
                 ShowMessage.ShowErrorOK(ex.Message, "Error");
             }
         }
-        #endregion
+		#endregion
+
+		/// <summary>
+		/// カウント
+		/// </summary>
+		public int Count
+		{
+			get
+			{
+				return this.Items.Count;
+			}
+		}
+
+		/// <summary>
+		/// 最初の要素を取得する
+		/// </summary>
+		/// <returns></returns>
+		public T First()
+		{
+			return this.Items.First();
+		}
+
+		/// <summary>
+		/// 最後の要素を取得する
+		/// </summary>
+		/// <returns></returns>
+		public T Last()
+		{
+			return this.Items.Last();
+		}
+
+		public int IndexOf(T item)
+		{
+			return this.Items.IndexOf(item);
+		}
 
         #region INotifyPropertyChanged 
         public event PropertyChangedEventHandler PropertyChanged;

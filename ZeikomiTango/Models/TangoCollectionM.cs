@@ -198,7 +198,6 @@ namespace ZeikomiTango.Models
         }
         #endregion
 
-
         #region 表示タイプの切り替え
         /// <summary>
         /// 表示タイプの切り替え
@@ -216,58 +215,45 @@ namespace ZeikomiTango.Models
         /// <param name="next_f">true:次へ false:前へ</param>
         public void ChangeDisplay(bool next_f)
         {
-            // インデックスの取得
-            int index = GetIndex();
 
             // ファイルが読み込まれている状態
             if (this.TangoList.Items.Count > 0 && this.TangoList.SelectedItem != null)
             {
+                // インデックスの取得
+                int index = GetIndex();
+
                 if (next_f) // 次へ移動
                 {
-                    if (index >= 0 && (this.TangoList.Items.Count - 1 > index || this._DisplayType == DisplayType.Question))
+                    ChangeDisplayType();    // 表示タイプの切替
+                    if (this._DisplayType == DisplayType.Question)  // 質問表示状態
                     {
-                        ChangeDisplayType();    // 表示タイプの切替
-                        if (this._DisplayType == DisplayType.Question)  // 質問表示状態
-                        {
-                            this.TangoList.SelectedItem = this.TangoList.Items.ElementAt(index + 1);    // 要素の切替
-                            this.Display = this.TangoList.SelectedItem.DisplayQuestion;                 // 質問のセット
-                        }
-                        else
-                        {
-                            this.Display = this.TangoList.SelectedItem.DisplayAnswer;                   // 回答のセット
-                        }
+                        int next_index = GetNextIndex(index);
+                        if (next_index < 0)
+                            return;
+
+                        this.TangoList.SelectedItem = this.TangoList.Items.ElementAt(next_index);    // 要素の切替
+                        this.Display = this.TangoList.SelectedItem.DisplayQuestion;                 // 質問のセット
                     }
                     else
                     {
-                        // 繰り返し
-                        if (this.IsRepeat)
-                        {
-                            SelectFirst();  // 最初を選択
-                        }
+                        this.Display = this.TangoList.SelectedItem.DisplayAnswer;                   // 回答のセット
                     }
                 }
                 else
                 {
-                    if (index > 0 || _DisplayType == DisplayType.Answer)
+                    ChangeDisplayType();    // 表示タイプの切替
+                    if (this._DisplayType == DisplayType.Answer)    // 回答表示状態
                     {
-                        ChangeDisplayType();    // 表示タイプの切替
-                        if (this._DisplayType == DisplayType.Answer)    // 回答表示状態
-                        {
-                            this.TangoList.SelectedItem = this.TangoList.Items.ElementAt(index - 1);    // 要素の切替
-                            this.Display = this.TangoList.SelectedItem.DisplayAnswer;                   // 回答のセット
-                        }
-                        else
-                        {
-                            this.Display = this.TangoList.SelectedItem.DisplayQuestion;                 // 質問のセット
-                        }
+                        int next_index = GetPrevIndex(index);
+                        if (next_index < 0)
+                            return;
+
+                        this.TangoList.SelectedItem = this.TangoList.Items.ElementAt(next_index);    // 要素の切替
+                        this.Display = this.TangoList.SelectedItem.DisplayAnswer;                   // 回答のセット
                     }
                     else
                     {
-                        if (this.IsRepeat)
-                        {
-                            SelectLast();           // 最後を選択
-                            ChangeDisplay(true);    // 問題文→回答文への切替
-                        }
+                        this.Display = this.TangoList.SelectedItem.DisplayQuestion;                 // 質問のセット
                     }
                 }
             }
@@ -389,6 +375,58 @@ namespace ZeikomiTango.Models
             }
         }
         #endregion
+
+        public int GetNextIndex(int current_index)
+        {
+            int count = this.TangoList.Count;
+
+            while (true)
+            {
+                current_index++;    // 一つインデックスをずらす
+
+                if (this.IsRepeat && current_index >= count)
+                {
+                    current_index = 0;
+                }
+                else if (current_index >= count)
+                {
+                    break;
+                }
+
+                if (this.TangoList.ElementAt(current_index).IsDisplay)
+                {
+                    return current_index;
+                }
+            }
+
+            return -1;
+        }
+
+        public int GetPrevIndex(int current_index)
+        {
+            int count = this.TangoList.Count;
+
+            while (true)
+            {
+                current_index--;    // 一つインデックスをずらす
+
+                if (this.IsRepeat && current_index < 0)
+                {
+                    current_index = count - 1;
+                }
+                else if (current_index < 0)
+                {
+                    break;
+                }
+
+                if (this.TangoList.ElementAt(current_index).IsDisplay)
+                {
+                    return current_index;
+                }
+            }
+
+            return -1;
+        }
 
         #region タイマーメソッド
         /// <summary>

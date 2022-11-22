@@ -126,6 +126,30 @@ namespace ZeikomiTango.Models
         }
         #endregion
 
+        #region 画面に表示するかどうか[IsDisplay]プロパティ
+        /// <summary>
+        /// 画面に表示するかどうか[IsDisplay]プロパティ用変数
+        /// </summary>
+        bool _IsDisplay = true;
+        /// <summary>
+        /// 画面に表示するかどうか[IsDisplay]プロパティ
+        /// </summary>
+        public bool IsDisplay
+        {
+            get
+            {
+                return _IsDisplay;
+            }
+            set
+            {
+                if (!_IsDisplay.Equals(value))
+                {
+                    _IsDisplay = value;
+                    NotifyPropertyChanged("IsDisplay");
+                }
+            }
+        }
+        #endregion
 
         /// <summary>
         /// 値のセット処理

@@ -91,6 +91,7 @@
                 <CheckBox Content="リピート" IsChecked="{Binding TangoCollection.IsRepeat}"/>
                 <CheckBox Content="ランダム" IsChecked="{Binding TangoCollection.IsRandom}"/>
             </StackPanel>
+            <ToggleButton Width="35" Margin="5" Content="表示" IsChecked="{Binding TangoCollection.TangoList.SelectedItem.IsDisplay}"/>
 
         </StackPanel>
 
