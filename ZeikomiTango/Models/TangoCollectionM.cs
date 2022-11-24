@@ -1,13 +1,17 @@
 ﻿using DocumentFormat.OpenXml.Drawing.Charts;
+using DocumentFormat.OpenXml.Office.CustomUI;
 using DocumentFormat.OpenXml.Presentation;
 using MVVMCore.BaseClass;
 using MVVMCore.Common.Utilities;
+using MVVMCore.Common.Wrapper;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Input;
 using System.Windows.Threading;
 
 namespace ZeikomiTango.Models
@@ -20,6 +24,8 @@ namespace ZeikomiTango.Models
 
     public class TangoCollectionM : ModelBase
     {
+        Random _Rand = new Random();
+
         #region 表示タイプ
         /// <summary>
         /// 表示タイプ
@@ -208,6 +214,43 @@ namespace ZeikomiTango.Models
         }
         #endregion
 
+        #region キー入力処理の受付
+        /// <summary>
+        /// キー入力処理の受付
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public void KeyDown(object sender, EventArgs e)
+        {
+            try
+            {
+                var key_eve = e as KeyEventArgs;
+
+                if (key_eve != null)
+                {
+                    if (key_eve.Key == Key.Right)
+                    {
+                        key_eve.Handled = true;
+                        ChangeDisplay(true);
+                    }
+                    else if (key_eve.Key == Key.Left)
+                    {
+                        key_eve.Handled = true;
+                        ChangeDisplay(false);
+                    }
+                    else
+                    {
+                        ;
+                    }
+                }
+            }
+            catch(Exception ev)
+            {
+                ShowMessage.ShowErrorOK(ev.Message, "Error");
+            }
+        }
+        #endregion
+
         #region 表示切替
         /// <summary>
         /// 表示切替
@@ -260,12 +303,18 @@ namespace ZeikomiTango.Models
         }
         #endregion
 
+        #region アイテムの選択処理
+        /// <summary>
+        /// アイテムの選択処理
+        /// </summary>
+        /// <param name="index">インデックス</param>
         public void SelectItem(int index)
         {
             this.TangoList.SelectedItem = this.TangoList.Items.ElementAt(index);    // 要素の切替
             this.Display = this.TangoList.SelectedItem.DisplayQuestion;                 // 質問のセット
             this._DisplayType = DisplayType.Question;
         }
+        #endregion
 
         #region 単語リスト[TangoList]プロパティ
         /// <summary>
@@ -322,7 +371,6 @@ namespace ZeikomiTango.Models
         }
         #endregion
 
-        Random _Rand = new Random();
         #region 次のアイテムを選択する
         /// <summary>
         /// 次のアイテムを選択する
@@ -376,6 +424,12 @@ namespace ZeikomiTango.Models
         }
         #endregion
 
+        #region 次のインデックスを取得
+        /// <summary>
+        /// 次のインデックスを取得
+        /// </summary>
+        /// <param name="current_index">現在のインデックス</param>
+        /// <returns>次のインデックス</returns>
         public int GetNextIndex(int current_index)
         {
             int count = this.TangoList.Count;
@@ -401,7 +455,14 @@ namespace ZeikomiTango.Models
 
             return -1;
         }
+        #endregion
 
+        #region 直前のインデックス取得
+        /// <summary>
+        /// 直前のインデックス取得
+        /// </summary>
+        /// <param name="current_index">現在のインデックス</param>
+        /// <returns>直前のインデックス</returns>
         public int GetPrevIndex(int current_index)
         {
             int count = this.TangoList.Count;
@@ -427,6 +488,7 @@ namespace ZeikomiTango.Models
 
             return -1;
         }
+        #endregion
 
         #region タイマーメソッド
         /// <summary>

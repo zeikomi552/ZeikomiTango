@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using ZeikomiTango.Models;
 
 namespace ZeikomiTango.ViewModels
@@ -68,6 +69,7 @@ namespace ZeikomiTango.ViewModels
                 ShowMessage.ShowErrorOK(ex.Message, "Error");
             }
         }
+
 
       　private void EnableDragDrop(FrameworkElement control)
         {
