@@ -32,6 +32,7 @@
         KeyboardNavigation.TabIndex="-1">
         <Grid>
             <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
@@ -41,13 +42,31 @@
                 </b:EventTrigger>
             </b:Interaction.Triggers>
 
-            <GroupBox Header="単語帳" Margin="5">
+            <Grid Margin="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="477*"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Orientation="Horizontal">
+                    <ToggleButton Content="自動" IsChecked="{Binding TangoCollection.IsAuto}" Style="{StaticResource MaterialDesignFlatPrimaryToggleButton}">
+                        <b:Interaction.Triggers>
+                            <b:EventTrigger EventName="Click">
+                                <b:CallMethodAction TargetObject="{Binding TangoCollection}" MethodName="Auto"/>
+                            </b:EventTrigger>
+                        </b:Interaction.Triggers>
+                    </ToggleButton>
+                    <ToggleButton FontSize="10" Content="リピート" IsChecked="{Binding TangoCollection.IsRepeat}"  Style="{StaticResource MaterialDesignFlatPrimaryToggleButton}"/>
+                    <ToggleButton FontSize="10" Content="ランダム" IsChecked="{Binding TangoCollection.IsRandom}"  Style="{StaticResource MaterialDesignFlatPrimaryToggleButton}"/>
+                </StackPanel>
+                <ToggleButton HorizontalAlignment="Right" Content="表示" IsChecked="{Binding TangoCollection.TangoList.SelectedItem.IsDisplay}" Style="{StaticResource MaterialDesignFlatPrimaryToggleButton}" Grid.Column="1"/>
+            </Grid>
+            <GroupBox Header="単語帳" Margin="5" Grid.Row="1">
                 <Grid>
                     <TextBlock Margin="5" AllowDrop="True" x:Name="DisplayArea" FontSize="{Binding TangoCollection.FontSize}" Text="{Binding TangoCollection.Display}" TextWrapping="WrapWithOverflow"/>
                 </Grid>
             </GroupBox>
 
-            <StackPanel Margin="5" Grid.Row="1" Orientation="Horizontal">
+            <StackPanel Margin="5" Grid.Row="2" Orientation="Horizontal">
                 <Button Width="35" Margin="5" Content="最初" TabIndex="-1">
                     <b:Interaction.Triggers>
                         <b:EventTrigger EventName="Click">
@@ -62,13 +81,10 @@
                         </b:EventTrigger>
                     </b:Interaction.Triggers>
                 </Button>
-                <ToggleButton Width="35" Margin="5" Content="自動" IsChecked="{Binding TangoCollection.IsAuto}" Style="{StaticResource MaterialDesignFlatPrimaryToggleButton}">
-                    <b:Interaction.Triggers>
-                        <b:EventTrigger EventName="Click">
-                            <b:CallMethodAction TargetObject="{Binding TangoCollection}" MethodName="Auto"/>
-                        </b:EventTrigger>
-                    </b:Interaction.Triggers>
-                </ToggleButton>
+                <TextBlock VerticalAlignment="Center" TextAlignment="Center" Width="50" Text="{Binding TangoCollection.CurrentIndex}"/>
+                <TextBlock VerticalAlignment="Center" TextAlignment="Center" Text="/"/>
+                <TextBlock VerticalAlignment="Center" TextAlignment="Center" Width="50" Text="{Binding TangoCollection.Count}"/>
+
                 <Button x:Name="RightButton" Width="35" Margin="5" Content="→">
                     <b:Interaction.Triggers>
                         <b:EventTrigger EventName="Click">
@@ -83,10 +99,7 @@
                         </b:EventTrigger>
                     </b:Interaction.Triggers>
                 </Button>
-                <StackPanel VerticalAlignment="Center" Margin="5" Orientation="Horizontal">
-                    <ToggleButton FontSize="10" Content="リピート" IsChecked="{Binding TangoCollection.IsRepeat}"  Style="{StaticResource MaterialDesignFlatPrimaryToggleButton}"/>
-                    <ToggleButton FontSize="10" Content="ランダム" IsChecked="{Binding TangoCollection.IsRandom}"  Style="{StaticResource MaterialDesignFlatPrimaryToggleButton}"/>
-                </StackPanel>
+
 
                 <Grid>
                     <StackPanel Orientation="Horizontal">
@@ -107,7 +120,6 @@
                     </StackPanel>
                 </Grid>
 
-                <ToggleButton Width="35" Margin="5" Content="表示" IsChecked="{Binding TangoCollection.TangoList.SelectedItem.IsDisplay}" Style="{StaticResource MaterialDesignFlatPrimaryToggleButton}"/>
 
             </StackPanel>
 

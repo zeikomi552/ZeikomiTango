@@ -142,7 +142,7 @@ namespace ZeikomiTango.ViewModels
                     string selection_b = sheet.Cell($"E{row}").Value.ToString()!;
                     string selection_c = sheet.Cell($"F{row}").Value.ToString()!;
                     string selection_d = sheet.Cell($"G{row}").Value.ToString()!;
-                    this.TangoCollection.TangoList.Items!.Add(new TangoM(question, explain, selection_a, selection_b, selection_c, selection_d, answer));
+                    this.TangoCollection.Add(new TangoM(question, explain, selection_a, selection_b, selection_c, selection_d, answer));
 
                     row++;
                 }

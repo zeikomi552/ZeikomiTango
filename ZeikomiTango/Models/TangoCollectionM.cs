@@ -107,7 +107,7 @@ namespace ZeikomiTango.Models
         /// <summary>
         /// タイマーインターバル(秒)[Interval]プロパティ用変数
         /// </summary>
-        int _Interval = 5;
+        int _Interval = 4;
         /// <summary>
         /// タイマーインターバル(秒)[Interval]プロパティ
         /// </summary>
@@ -299,6 +299,8 @@ namespace ZeikomiTango.Models
                         this.Display = this.TangoList.SelectedItem.DisplayQuestion;                 // 質問のセット
                     }
                 }
+
+                NotifyPropertyChanged("CurrentIndex");
             }
         }
         #endregion
@@ -313,6 +315,7 @@ namespace ZeikomiTango.Models
             this.TangoList.SelectedItem = this.TangoList.Items.ElementAt(index);    // 要素の切替
             this.Display = this.TangoList.SelectedItem.DisplayQuestion;                 // 質問のセット
             this._DisplayType = DisplayType.Question;
+            NotifyPropertyChanged("CurrentIndex");
         }
         #endregion
 
@@ -352,6 +355,7 @@ namespace ZeikomiTango.Models
                 this.TangoList.SelectedItem = this.TangoList.Items.First();
                 this._DisplayType = DisplayType.Question;   // 表示タイプを問題文に変更
                 this.Display = this.TangoList.SelectedItem.DisplayQuestion;
+                NotifyPropertyChanged("CurrentIndex");
             }
         }
         #endregion
@@ -367,6 +371,7 @@ namespace ZeikomiTango.Models
                 this.TangoList.SelectedItem = this.TangoList.Items.Last();
                 this._DisplayType = DisplayType.Question;   // 表示タイプを問題文に変更
                 this.Display = this.TangoList.SelectedItem.DisplayQuestion;
+                NotifyPropertyChanged("CurrentIndex");
             }
         }
         #endregion
@@ -403,6 +408,32 @@ namespace ZeikomiTango.Models
         public void SelectPrev()
         {
             ChangeDisplay(false);
+        }
+        #endregion
+
+        #region 現在のインデックス
+        /// <summary>
+        /// 現在のインデックス
+        /// </summary>
+        public int CurrentIndex
+        {
+            get
+            {
+                return GetIndex();
+            }
+        }
+        #endregion
+
+        #region リストのサイズ
+        /// <summary>
+        /// リストのサイズ
+        /// </summary>
+        public int Count
+        {
+            get
+            {
+                return this.TangoList.Count;
+            }
         }
         #endregion
 
@@ -528,5 +559,11 @@ namespace ZeikomiTango.Models
             _Timer.Stop();
         }
         #endregion
+
+        public void Add(TangoM item)
+        {
+            this.TangoList.Items.Add(item);
+            NotifyPropertyChanged("Count");
+        }
     }
 }
