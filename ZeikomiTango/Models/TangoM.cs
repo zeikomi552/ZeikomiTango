@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls.Primitives;
 
 namespace ZeikomiTango.Models
 {
@@ -11,7 +12,10 @@ namespace ZeikomiTango.Models
     {
         public TangoM()
         {
-
+            this.Selections.Add(String.Empty);
+            this.Selections.Add(String.Empty);
+            this.Selections.Add(String.Empty);
+            this.Selections.Add(String.Empty);
         }
 
         public TangoM(string question, string explain, string select_a, string select_b, string select_c, string select_d, string answer)

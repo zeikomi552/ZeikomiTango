@@ -161,6 +161,7 @@ namespace ZeikomiTango.ViewModels
                     {
 
                     }
+                    this.TangoCollection = vm.TangoCollection;
                 }
             }
             catch (Exception ex)

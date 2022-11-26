@@ -8,6 +8,7 @@ using MVVMCore.Common.Wrapper;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -615,6 +616,17 @@ namespace ZeikomiTango.Models
         }
         #endregion
 
+        #region 要素の削除
+        /// <summary>
+        /// 要素の削除
+        /// </summary>
+        public void Clear()
+        {
+            this.TangoList.Items.Clear();
+            NotifyPropertyChanged("Count");
+        }
+        #endregion
+
         #region エクセルファイルの読み込み処理
         /// <summary>
         /// エクセルファイルの読み込み処理
@@ -627,28 +639,78 @@ namespace ZeikomiTango.Models
             if (!string.IsNullOrEmpty(execl_file_path) || ext.ToLower().Equals(".xlsx"))
             {
                 this.FilePath = execl_file_path;
-                var workbook = new XLWorkbook(execl_file_path);
-                var sheet = workbook.Worksheets.ElementAt(0);
+                FileStream fs = new FileStream(this.FilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 
-                int row = 2;
-                string value = string.Empty;
-
-                // 値を確認
-                while ((value = sheet.Cell($"A{row}").Value.ToString()!) != string.Empty)
+                using (var workbook = new XLWorkbook(fs, XLEventTracking.Disabled))
                 {
-                    string question = value;
-                    string answer = sheet.Cell($"B{row}").Value.ToString()!;
-                    string explain = sheet.Cell($"C{row}").Value.ToString()!;
-                    string selection_a = sheet.Cell($"D{row}").Value.ToString()!;
-                    string selection_b = sheet.Cell($"E{row}").Value.ToString()!;
-                    string selection_c = sheet.Cell($"F{row}").Value.ToString()!;
-                    string selection_d = sheet.Cell($"G{row}").Value.ToString()!;
-                    this.Add(new TangoM(question, explain, selection_a, selection_b, selection_c, selection_d, answer));
+                    var sheet = workbook.Worksheets.ElementAt(0);
 
-                    row++;
+                    int row = 2;
+                    string value = string.Empty;
+                    this.Clear();
+
+                    // 値を確認
+                    while ((value = sheet.Cell($"A{row}").Value.ToString()!) != string.Empty)
+                    {
+                        string question = value;
+                        string answer = sheet.Cell($"B{row}").Value.ToString()!;
+                        string explain = sheet.Cell($"C{row}").Value.ToString()!;
+                        string selection_a = sheet.Cell($"D{row}").Value.ToString()!;
+                        string selection_b = sheet.Cell($"E{row}").Value.ToString()!;
+                        string selection_c = sheet.Cell($"F{row}").Value.ToString()!;
+                        string selection_d = sheet.Cell($"G{row}").Value.ToString()!;
+                        this.Add(new TangoM(question, explain, selection_a, selection_b, selection_c, selection_d, answer));
+
+                        row++;
+                    }
+
+                    this.SelectFirst();
                 }
+            }
+        }
+        #endregion
 
-                this.SelectFirst();
+        #region エクセルファイルの保存処理
+        /// <summary>
+        /// エクセルファイルの保存処理
+        /// </summary>
+        /// <param name="execl_file_path">エクセルファイルパス</param>
+        public void SaveExcel(string execl_file_path)
+        {
+            string ext = System.IO.Path.GetExtension(execl_file_path);
+
+            if (!string.IsNullOrEmpty(execl_file_path) || ext.ToLower().Equals(".xlsx"))
+            {
+                this.FilePath = execl_file_path;
+
+                using (var workbook = new XLWorkbook(XLEventTracking.Disabled))
+                {
+                    var sheet = workbook.Worksheets.Add("単語帳");
+
+                    int row = 2;
+                    string value = string.Empty;
+
+                    sheet.Cell($"A1").Value = "Question";
+                    sheet.Cell($"B1").Value = "Answer";
+                    sheet.Cell($"C1").Value = "Explanation";
+                    sheet.Cell($"D1").Value = "A";
+                    sheet.Cell($"E1").Value = "B";
+                    sheet.Cell($"F1").Value = "C";
+                    sheet.Cell($"G1").Value = "D";
+                    foreach (var tango in this.TangoList.Items)
+                    {
+                        sheet.Cell($"A{row}").Value = tango.Querstion.ToString();
+                        sheet.Cell($"B{row}").Value = tango.Answer.ToString();
+                        sheet.Cell($"C{row}").Value = tango.Explanation.ToString();
+                        sheet.Cell($"D{row}").Value = tango.Selections[0].ToString();
+                        sheet.Cell($"E{row}").Value = tango.Selections[1].ToString();
+                        sheet.Cell($"F{row}").Value = tango.Selections[2].ToString();
+                        sheet.Cell($"G{row}").Value = tango.Selections[3].ToString();
+                        row++;
+                    }
+
+                    workbook.SaveAs(execl_file_path);
+                }
             }
         }
         #endregion
