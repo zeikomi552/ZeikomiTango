@@ -42,8 +42,12 @@ namespace ZeikomiTango.ViewModels
         }
         #endregion
 
-
-
+        #region 初期化処理
+        /// <summary>
+        /// 初期化処理
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         public override void Init(object sender, EventArgs e)
         {
             try
@@ -58,7 +62,14 @@ namespace ZeikomiTango.ViewModels
                 ShowMessage.ShowErrorOK(ex.Message, "Error");
             }
         }
+        #endregion
 
+        #region 閉じる処理
+        /// <summary>
+        /// 閉じる処理
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         public override void Close(object sender, EventArgs e)
         {
             try
@@ -69,9 +80,14 @@ namespace ZeikomiTango.ViewModels
                 ShowMessage.ShowErrorOK(ex.Message, "Error");
             }
         }
+        #endregion
 
-
-      　private void EnableDragDrop(FrameworkElement control)
+        #region ドラッグ&ドロップでエクセルファイルの読み込み
+        /// <summary>
+        /// ドラッグ&ドロップでエクセルファイルの読み込み
+        /// </summary>
+        /// <param name="control"></param>
+        private void EnableDragDrop(FrameworkElement control)
         {
             //ドラッグ＆ドロップを受け付けられるようにする
             control.AllowDrop = true;
@@ -94,11 +110,17 @@ namespace ZeikomiTango.ViewModels
                     // ここに、ドラッグ＆ドロップ受付時の処理を記述する
                     //--------------------------------------------------------------------
 
-                    ReadExcel(paths.FirstOrDefault()!);
+                    this.TangoCollection.ReadExcel(paths.FirstOrDefault()!);
                 }
             };
 
         }
+        #endregion
+
+        #region エクセルの読み込み処理
+        /// <summary>
+        /// エクセルの読み込み処理
+        /// </summary>
         public void ReadExcel()
         {
             try
@@ -112,7 +134,7 @@ namespace ZeikomiTango.ViewModels
                 // ダイアログを表示する
                 if (dialog.ShowDialog() == true)
                 {
-                    ReadExcel(dialog.FileName); // ファイルの読み込み
+                    this.TangoCollection.ReadExcel(dialog.FileName);
                 }
             }
             catch (Exception ex)
@@ -120,35 +142,6 @@ namespace ZeikomiTango.ViewModels
                 ShowMessage.ShowErrorOK(ex.Message, "Error");
             }
         }
-        private void ReadExcel(string path)
-        {
-            string ext = System.IO.Path.GetExtension(path); //extには".jpg"が代入されます。
-
-            if (!string.IsNullOrEmpty(path) || path.ToLower().Equals(".xlsx"))
-            {
-                var workbook = new XLWorkbook(path);
-                var sheet = workbook.Worksheets.ElementAt(0);
-
-                int row = 2;
-                string value = string.Empty;
-
-                // 値を確認
-                while ((value = sheet.Cell($"A{row}").Value.ToString()!) != string.Empty)
-                {
-                    string question = value;
-                    string answer = sheet.Cell($"B{row}").Value.ToString()!;
-                    string explain = sheet.Cell($"C{row}").Value.ToString()!;
-                    string selection_a = sheet.Cell($"D{row}").Value.ToString()!;
-                    string selection_b = sheet.Cell($"E{row}").Value.ToString()!;
-                    string selection_c = sheet.Cell($"F{row}").Value.ToString()!;
-                    string selection_d = sheet.Cell($"G{row}").Value.ToString()!;
-                    this.TangoCollection.Add(new TangoM(question, explain, selection_a, selection_b, selection_c, selection_d, answer));
-
-                    row++;
-                }
-
-                this.TangoCollection.SelectFirst();
-            }
-        }
+        #endregion
     }
 }

@@ -1,4 +1,5 @@
-﻿using DocumentFormat.OpenXml.Drawing.Charts;
+﻿using ClosedXML.Excel;
+using DocumentFormat.OpenXml.Drawing.Charts;
 using DocumentFormat.OpenXml.Office.CustomUI;
 using DocumentFormat.OpenXml.Presentation;
 using MVVMCore.BaseClass;
@@ -50,6 +51,31 @@ namespace ZeikomiTango.Models
             _Timer = new DispatcherTimer();                         // 優先度はDispatcherPriority.Background
             _Timer.Interval = new TimeSpan(0, 0, this.Interval);    // インターバルを設定
             _Timer.Tick += new EventHandler(TimerMethod!);          // タイマメソッドを設定
+        }
+        #endregion
+
+        #region ファイルパス[FilePath]プロパティ
+        /// <summary>
+        /// ファイルパス[FilePath]プロパティ用変数
+        /// </summary>
+        string _FilePath = string.Empty;
+        /// <summary>
+        /// ファイルパス[FilePath]プロパティ
+        /// </summary>
+        public string FilePath
+        {
+            get
+            {
+                return _FilePath;
+            }
+            set
+            {
+                if (_FilePath == null || !_FilePath.Equals(value))
+                {
+                    _FilePath = value;
+                    NotifyPropertyChanged("FilePath");
+                }
+            }
         }
         #endregion
 
@@ -560,10 +586,54 @@ namespace ZeikomiTango.Models
         }
         #endregion
 
+        #region 要素を追加する
+        /// <summary>
+        /// 要素を追加する
+        /// </summary>
+        /// <param name="item">追加要素</param>
         public void Add(TangoM item)
         {
             this.TangoList.Items.Add(item);
             NotifyPropertyChanged("Count");
         }
+        #endregion
+
+        #region エクセルファイルの読み込み処理
+        /// <summary>
+        /// エクセルファイルの読み込み処理
+        /// </summary>
+        /// <param name="execl_file_path">エクセルファイルパス</param>
+        public void ReadExcel(string execl_file_path)
+        {
+            string ext = System.IO.Path.GetExtension(execl_file_path);
+
+            if (!string.IsNullOrEmpty(execl_file_path) || ext.ToLower().Equals(".xlsx"))
+            {
+                this.FilePath = execl_file_path;
+                var workbook = new XLWorkbook(execl_file_path);
+                var sheet = workbook.Worksheets.ElementAt(0);
+
+                int row = 2;
+                string value = string.Empty;
+
+                // 値を確認
+                while ((value = sheet.Cell($"A{row}").Value.ToString()!) != string.Empty)
+                {
+                    string question = value;
+                    string answer = sheet.Cell($"B{row}").Value.ToString()!;
+                    string explain = sheet.Cell($"C{row}").Value.ToString()!;
+                    string selection_a = sheet.Cell($"D{row}").Value.ToString()!;
+                    string selection_b = sheet.Cell($"E{row}").Value.ToString()!;
+                    string selection_c = sheet.Cell($"F{row}").Value.ToString()!;
+                    string selection_d = sheet.Cell($"G{row}").Value.ToString()!;
+                    this.Add(new TangoM(question, explain, selection_a, selection_b, selection_c, selection_d, answer));
+
+                    row++;
+                }
+
+                this.SelectFirst();
+            }
+        }
+        #endregion
     }
 }
