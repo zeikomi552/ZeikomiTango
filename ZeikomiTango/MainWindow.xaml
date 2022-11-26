@@ -57,6 +57,13 @@
                     </ToggleButton>
                     <ToggleButton FontSize="10" Content="リピート" IsChecked="{Binding TangoCollection.IsRepeat}"  Style="{StaticResource MaterialDesignFlatPrimaryToggleButton}"/>
                     <ToggleButton FontSize="10" Content="ランダム" IsChecked="{Binding TangoCollection.IsRandom}"  Style="{StaticResource MaterialDesignFlatPrimaryToggleButton}"/>
+                    <Button Margin="5" Content="編集">
+                        <b:Interaction.Triggers>
+                            <b:EventTrigger EventName="Click">
+                                <b:CallMethodAction TargetObject="{Binding}" MethodName="OpenEditWindow"/>
+                            </b:EventTrigger>
+                        </b:Interaction.Triggers>
+                    </Button>
                 </StackPanel>
                 <ToggleButton HorizontalAlignment="Right" Content="表示" IsChecked="{Binding TangoCollection.TangoList.SelectedItem.IsDisplay}" Style="{StaticResource MaterialDesignFlatPrimaryToggleButton}" Grid.Column="1"/>
             </Grid>
@@ -81,7 +88,7 @@
                         </b:EventTrigger>
                     </b:Interaction.Triggers>
                 </Button>
-                <TextBlock VerticalAlignment="Center" TextAlignment="Center" Width="50" Text="{Binding TangoCollection.CurrentIndex}"/>
+                <TextBlock VerticalAlignment="Center" TextAlignment="Center" Width="50" Text="{Binding TangoCollection.CurrentPage}"/>
                 <TextBlock VerticalAlignment="Center" TextAlignment="Center" Text="/"/>
                 <TextBlock VerticalAlignment="Center" TextAlignment="Center" Width="50" Text="{Binding TangoCollection.Count}"/>
 

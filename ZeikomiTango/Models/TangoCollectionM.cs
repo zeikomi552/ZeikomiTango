@@ -327,6 +327,7 @@ namespace ZeikomiTango.Models
                 }
 
                 NotifyPropertyChanged("CurrentIndex");
+                NotifyPropertyChanged("CurrentPage");
             }
         }
         #endregion
@@ -342,6 +343,7 @@ namespace ZeikomiTango.Models
             this.Display = this.TangoList.SelectedItem.DisplayQuestion;                 // 質問のセット
             this._DisplayType = DisplayType.Question;
             NotifyPropertyChanged("CurrentIndex");
+            NotifyPropertyChanged("CurrentPage");
         }
         #endregion
 
@@ -382,6 +384,7 @@ namespace ZeikomiTango.Models
                 this._DisplayType = DisplayType.Question;   // 表示タイプを問題文に変更
                 this.Display = this.TangoList.SelectedItem.DisplayQuestion;
                 NotifyPropertyChanged("CurrentIndex");
+                NotifyPropertyChanged("CurrentPage");
             }
         }
         #endregion
@@ -398,6 +401,7 @@ namespace ZeikomiTango.Models
                 this._DisplayType = DisplayType.Question;   // 表示タイプを問題文に変更
                 this.Display = this.TangoList.SelectedItem.DisplayQuestion;
                 NotifyPropertyChanged("CurrentIndex");
+                NotifyPropertyChanged("CurrentPage");
             }
         }
         #endregion
@@ -446,6 +450,19 @@ namespace ZeikomiTango.Models
             get
             {
                 return GetIndex();
+            }
+        }
+        #endregion
+
+        #region 現在のページ番号
+        /// <summary>
+        /// 現在のページ番号
+        /// </summary>
+        public int CurrentPage
+        {
+            get
+            {
+                return GetIndex() + 1;
             }
         }
         #endregion

@@ -12,6 +12,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using ZeikomiTango.Models;
+using ZeikomiTango.Views;
 
 namespace ZeikomiTango.ViewModels
 {
@@ -143,5 +144,29 @@ namespace ZeikomiTango.ViewModels
             }
         }
         #endregion
+
+        public void OpenEditWindow()
+        {
+            try
+            {
+                var wnd = new EditWindowV();
+                var vm = wnd.DataContext as EditWindowVM;
+
+                if (vm != null)
+                {
+                    this.TangoCollection.IsAuto = false;
+                    vm.TangoCollection = this.TangoCollection;
+
+                    if (wnd.ShowDialog() == true)
+                    {
+
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowMessage.ShowErrorOK(ex.Message, "Error");
+            }
+        }
     }
 }
