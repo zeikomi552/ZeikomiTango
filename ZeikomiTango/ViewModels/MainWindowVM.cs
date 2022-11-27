@@ -145,6 +145,47 @@ namespace ZeikomiTango.ViewModels
         }
         #endregion
 
+        #region キー入力処理の受付
+        /// <summary>
+        /// キー入力処理の受付
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public void KeyDown(object sender, EventArgs e)
+        {
+            try
+            {
+                var key_eve = e as KeyEventArgs;
+
+                if (key_eve != null)
+                {
+                    if (key_eve.Key == Key.Right)
+                    {
+                        key_eve.Handled = true;
+                        this.TangoCollection.ChangeDisplay(true);
+                    }
+                    else if (key_eve.Key == Key.Left)
+                    {
+                        key_eve.Handled = true;
+                        this.TangoCollection.ChangeDisplay(false);
+                    }
+                    else
+                    {
+                        ;
+                    }
+                }
+            }
+            catch (Exception ev)
+            {
+                ShowMessage.ShowErrorOK(ev.Message, "Error");
+            }
+        }
+        #endregion
+
+        #region 編集画面を開く
+        /// <summary>
+        /// 編集画面を開く
+        /// </summary>
         public void OpenEditWindow()
         {
             try
@@ -169,5 +210,6 @@ namespace ZeikomiTango.ViewModels
                 ShowMessage.ShowErrorOK(ex.Message, "Error");
             }
         }
+        #endregion
     }
 }
