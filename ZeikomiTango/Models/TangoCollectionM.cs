@@ -80,6 +80,19 @@ namespace ZeikomiTango.Models
         }
         #endregion
 
+        #region 選択要素
+        /// <summary>
+        /// 選択要素
+        /// </summary>
+        public TangoM SelectedItem
+        {
+            get
+            {
+                return this.TangoList.SelectedItem;
+            }
+        }
+        #endregion
+
         #region 表示[Display]プロパティ
         /// <summary>
         /// 表示[Display]プロパティ用変数
