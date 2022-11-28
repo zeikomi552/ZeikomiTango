@@ -73,6 +73,31 @@ namespace ZeikomiTango.ViewModels
         }
         #endregion
 
+        #region フレーズ要素[PhraseItems]プロパティ
+        /// <summary>
+        /// フレーズ要素[PhraseItems]プロパティ用変数
+        /// </summary>
+        ModelList<PhraseM> _PhraseItems = new ModelList<PhraseM>();
+        /// <summary>
+        /// フレーズ要素[PhraseItems]プロパティ
+        /// </summary>
+        public ModelList<PhraseM> PhraseItems
+        {
+            get
+            {
+                return _PhraseItems;
+            }
+            set
+            {
+                if (_PhraseItems == null || !_PhraseItems.Equals(value))
+                {
+                    _PhraseItems = value;
+                    NotifyPropertyChanged("PhraseItems");
+                }
+            }
+        }
+        #endregion
+
 
 
         #region 初期化処理
@@ -116,6 +141,10 @@ namespace ZeikomiTango.ViewModels
         }
         #endregion
 
+        #region 新規作成
+        /// <summary>
+        /// 新規作成
+        /// </summary>
         public void NewCreate()
         {
             try
@@ -127,7 +156,12 @@ namespace ZeikomiTango.ViewModels
                 ShowMessage.ShowErrorOK(ex.Message, "Error");
             }
         }
+        #endregion
 
+        #region 保存処理
+        /// <summary>
+        /// 保存処理
+        /// </summary>
         public void Save()
         {
             try
@@ -149,6 +183,7 @@ namespace ZeikomiTango.ViewModels
                 ShowMessage.ShowErrorOK(ex.Message, "Error");
             }
         }
+        #endregion
 
         #region キー入力処理の受付
         /// <summary>
@@ -165,7 +200,8 @@ namespace ZeikomiTango.ViewModels
                 if (wnd != null)
                 {
                     var key_eve = e as KeyEventArgs;
-                    var url_base = "https://www.deepl.com/ja/translator#en/ja/{0}";
+                    var deepl_url_base = "https://www.deepl.com/ja/translator#en/ja/{0}";
+                    var googletranslate_url_base = "https://translate.google.co.jp/?sl=en&tl=ja&text={0}&op=translate";
 
                     if (key_eve!.KeyboardDevice.IsKeyDown(Key.LeftAlt) || key_eve!.KeyboardDevice.IsKeyDown(Key.RightAlt))
                     {
@@ -204,7 +240,7 @@ namespace ZeikomiTango.ViewModels
                                 {
                                     if (wnd != null)
                                     {
-                                        string url = string.Format(url_base, this.TangoCollection.TangoList.SelectedItem.Selections[0]);
+                                        string url = string.Format(googletranslate_url_base, this.TangoCollection.TangoList.SelectedItem.Selections[0]);
                                         if (wnd.WebView2Ctrl != null && wnd.WebView2Ctrl.CoreWebView2 != null)
                                         {
                                             wnd.WebView2Ctrl.CoreWebView2.Navigate(url);
@@ -214,7 +250,7 @@ namespace ZeikomiTango.ViewModels
                                 }
                             case Key.D2:
                                 {
-                                    string url = $"https://translate.google.co.jp/?hl=ja&sl=en&tl=ja&text={this.TangoCollection.TangoList.SelectedItem.Selections[1]}%0A&op=translate";
+                                    string url = string.Format(googletranslate_url_base, this.TangoCollection.TangoList.SelectedItem.Selections[1]);
                                     if (wnd.WebView2Ctrl != null && wnd.WebView2Ctrl.CoreWebView2 != null)
                                     {
                                         wnd.WebView2Ctrl.CoreWebView2.Navigate(url);
@@ -223,7 +259,7 @@ namespace ZeikomiTango.ViewModels
                                 }
                             case Key.D3:
                                 {
-                                    string url = $"https://translate.google.co.jp/?hl=ja&sl=en&tl=ja&text={this.TangoCollection.TangoList.SelectedItem.Selections[2]}%0A&op=translate";
+                                    string url = string.Format(googletranslate_url_base, this.TangoCollection.TangoList.SelectedItem.Selections[2]);
                                     if (wnd.WebView2Ctrl != null && wnd.WebView2Ctrl.CoreWebView2 != null)
                                     {
                                         wnd.WebView2Ctrl.CoreWebView2.Navigate(url);
@@ -232,7 +268,25 @@ namespace ZeikomiTango.ViewModels
                                 }
                             case Key.D4:
                                 {
-                                    string url = $"https://translate.google.co.jp/?hl=ja&sl=en&tl=ja&text={this.TangoCollection.TangoList.SelectedItem.Selections[3]}%0A&op=translate";
+                                    string url = string.Format(googletranslate_url_base, this.TangoCollection.TangoList.SelectedItem.Selections[3]);
+                                    if (wnd.WebView2Ctrl != null && wnd.WebView2Ctrl.CoreWebView2 != null)
+                                    {
+                                        wnd.WebView2Ctrl.CoreWebView2.Navigate(url);
+                                    }
+                                    break;
+                                }
+                            case Key.D5:
+                                {
+                                    string url = string.Format(deepl_url_base, this.PhraseItems.SelectedItem.Phrase);
+                                    if (wnd.WebView2Ctrl != null && wnd.WebView2Ctrl.CoreWebView2 != null)
+                                    {
+                                        wnd.WebView2Ctrl.CoreWebView2.Navigate(url);
+                                    }
+                                    break;
+                                }
+                            case Key.D6:
+                                {
+                                    string url = string.Format(googletranslate_url_base, this.PhraseItems.SelectedItem.Words.SelectedItem.Word);
                                     if (wnd.WebView2Ctrl != null && wnd.WebView2Ctrl.CoreWebView2 != null)
                                     {
                                         wnd.WebView2Ctrl.CoreWebView2.Navigate(url);
@@ -241,7 +295,7 @@ namespace ZeikomiTango.ViewModels
                                 }
                             case Key.D0:
                                 {
-                                    string url = $"https://translate.google.co.jp/?hl=ja&sl=en&tl=ja&text={this.TangoCollection.TangoList.SelectedItem.Querstion}%0A&op=translate";
+                                    string url = string.Format(deepl_url_base, this.TangoCollection.TangoList.SelectedItem.Querstion);
                                     if (wnd.WebView2Ctrl != null && wnd.WebView2Ctrl.CoreWebView2 != null)
                                     {
                                         wnd.WebView2Ctrl.CoreWebView2.Navigate(url);
@@ -284,6 +338,10 @@ namespace ZeikomiTango.ViewModels
         }
         #endregion
 
+        #region 合成音声の開始
+        /// <summary>
+        /// 合成音声の開始
+        /// </summary>
         public void StartVoice()
         {
             try
@@ -303,7 +361,45 @@ namespace ZeikomiTango.ViewModels
 
             }
         }
+        #endregion
 
+        #region Questionの選択変更処理
+        /// <summary>
+        /// Questionの選択変更処理
+        /// </summary>
+        public void QuestionChanged()
+        {
+            try
+            {
+                // フレーズに分解する
+                var list = this.TangoCollection.SelectedItem.Querstion.Replace("\r", "").Split("\n");
+
+                // フレーズリストをクリア
+                this.PhraseItems.Items.Clear();
+
+                // リスト数文まわす
+                foreach (var tmp in list)
+                {
+                    // フレーズリストに追加
+                    this.PhraseItems.Items.Add(new PhraseM()
+                    {
+                        Phrase = tmp
+                    }
+                    );
+                }
+            }
+            catch
+            {
+
+            }
+        }
+        #endregion
+
+        #region URLを開く
+        /// <summary>
+        /// URLを開く
+        /// </summary>
+        /// <param name="url">開くURL</param>
         private void OpenURL(string url)
         {
             try
@@ -320,5 +416,133 @@ namespace ZeikomiTango.ViewModels
             {
             }
         }
+        #endregion
+
+        #region フレーズを音声再生する
+        /// <summary>
+        /// フレーズを音声再生する
+        /// </summary>
+        public void PhraseVoice()
+        {
+            try
+            {
+                PhraseVoice(this.PhraseItems.SelectedItem.Phrase);  // フレーズ再生
+            }
+            catch
+            {
+            }
+        }
+        #endregion
+
+        public void PhraseVoiceContinue()
+        {
+            try
+            {
+                foreach (var tmp in this.PhraseItems.Items)
+                {
+                    PhraseVoice(tmp.Phrase);    // フレーズ再生
+                }
+            }
+            catch
+            {
+            }
+        }
+
+        #region フレーズを音声再生する
+        /// <summary>
+        /// フレーズを音声再生する
+        /// </summary>
+        /// <param name="phrase">フレーズ</param>
+        private void PhraseVoice(string phrase)
+        {
+            try
+            {
+                var synthesizer = new SpeechSynthesizer();
+                synthesizer.SetOutputToDefaultAudioDevice();
+                synthesizer.SelectVoice("Microsoft Zira Desktop");
+                synthesizer.Rate = this.Rate;
+                synthesizer.Speak(phrase);
+            }
+            catch
+            {
+            }
+        }
+        #endregion
+
+        #region フレーズのダブルクリック
+        /// <summary>
+        /// フレーズのダブルクリック
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public void PhraseDoubleClick(object sender, EventArgs e)
+        {
+            try
+            {
+                // ウィンドウを取得
+                var wnd = VisualTreeHelperWrapper.GetWindow<EditWindowV>(sender) as EditWindowV;
+
+                // nullチェック
+                if (wnd != null)
+                {
+                    var deepl_url_base = "https://www.deepl.com/ja/translator#en/ja/{0}";   // DeepLのURL
+
+                    // nullチェック
+                    if (this.PhraseItems.SelectedItem != null && this.PhraseItems.SelectedItem.Words.SelectedItem != null)
+                    {
+                        string url = string.Format(deepl_url_base, this.PhraseItems.SelectedItem.Phrase);   // URL作成
+
+                        // nullチェック
+                        if (wnd.WebView2Ctrl != null && wnd.WebView2Ctrl.CoreWebView2 != null)
+                        {
+                            // URLを開く
+                            wnd.WebView2Ctrl.CoreWebView2.Navigate(url);
+                        }
+                    }
+                }
+            }
+            catch
+            {
+            }
+        }
+        #endregion
+
+        #region 単語のダブルクリック
+        /// <summary>
+        /// 単語のダブルクリック
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public void WordDoubleClick(object sender, EventArgs e)
+        {
+            try
+            {
+                // ウィンドウを取得
+                var wnd = VisualTreeHelperWrapper.GetWindow<EditWindowV>(sender) as EditWindowV;
+
+                // nullチェック
+                if (wnd != null)
+                {
+                    var googletranslate_url_base = "https://translate.google.co.jp/?sl=en&tl=ja&text={0}&op=translate";
+
+                    // nullチェック
+                    if (this.PhraseItems.SelectedItem != null && this.PhraseItems.SelectedItem.Words.SelectedItem != null)
+                    {
+                        string url = string.Format(googletranslate_url_base, this.PhraseItems.SelectedItem.Words.SelectedItem.Word);   // URL作成
+
+                        // nullチェック
+                        if (wnd.WebView2Ctrl != null && wnd.WebView2Ctrl.CoreWebView2 != null)
+                        {
+                            // URLを開く
+                            wnd.WebView2Ctrl.CoreWebView2.Navigate(url);
+                        }
+                    }
+                }
+            }
+            catch
+            {
+            }
+        }
+        #endregion
     }
 }

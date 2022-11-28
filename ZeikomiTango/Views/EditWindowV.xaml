@@ -25,40 +25,87 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="2*"/>
-            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
         <GroupBox Margin="5" Header="リスト">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="auto"/>
-                </Grid.RowDefinitions>
-                <DataGrid x:Name="dg" CanUserAddRows="False" AutoGenerateColumns="False" Margin="5,5,5,5"
+            <TabControl>
+                <TabItem Header="単語帳">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="auto"/>
+                        </Grid.RowDefinitions>
+                        <DataGrid x:Name="dg" CanUserAddRows="False" AutoGenerateColumns="False" Margin="5,5,5,5"
                           ItemsSource="{Binding TangoCollection.TangoList.Items}" SelectedItem="{Binding TangoCollection.TangoList.SelectedItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                    <DataGrid.Columns>
-                        <DataGridCheckBoxColumn Header="表示" Binding="{Binding IsDisplay}"/>
-                        <DataGridTextColumn Header="問題" Binding="{Binding Querstion}" IsReadOnly="True" Width="300"/>
-                    </DataGrid.Columns>
-                </DataGrid>
-                <StackPanel Grid.Row="1" Orientation="Horizontal">
-                    <Button Margin="5" Content="追加" Cursor="Hand">
-                        <b:Interaction.Triggers>
-                            <b:EventTrigger EventName="Click">
-                                <b:CallMethodAction TargetObject="{Binding}" MethodName="NewCreate"/>
-                            </b:EventTrigger>
-                        </b:Interaction.Triggers>
-                    </Button>
-                    <Button Margin="5" Content="保存" Cursor="Hand">
-                        <b:Interaction.Triggers>
-                            <b:EventTrigger EventName="Click">
-                                <b:CallMethodAction TargetObject="{Binding}" MethodName="Save"/>
-                            </b:EventTrigger>
-                        </b:Interaction.Triggers>
-                    </Button>
-                </StackPanel>
-            </Grid>
+                            <DataGrid.Columns>
+                                <DataGridCheckBoxColumn Header="表示" Binding="{Binding IsDisplay}"/>
+                                <DataGridTextColumn Header="問題" Binding="{Binding Querstion}" IsReadOnly="True" Width="300"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                        <StackPanel Grid.Row="1" Orientation="Horizontal">
+                            <Button Margin="5" Content="追加" Cursor="Hand">
+                                <b:Interaction.Triggers>
+                                    <b:EventTrigger EventName="Click">
+                                        <b:CallMethodAction TargetObject="{Binding}" MethodName="NewCreate"/>
+                                    </b:EventTrigger>
+                                </b:Interaction.Triggers>
+                            </Button>
+                            <Button Margin="5" Content="保存" Cursor="Hand">
+                                <b:Interaction.Triggers>
+                                    <b:EventTrigger EventName="Click">
+                                        <b:CallMethodAction TargetObject="{Binding}" MethodName="Save"/>
+                                    </b:EventTrigger>
+                                </b:Interaction.Triggers>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+                </TabItem>
+                <TabItem Header="文">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="auto"/>
+                        </Grid.RowDefinitions>
+                        <GroupBox Header="フレーズ">
+                            <DataGrid Margin="5" ItemsSource="{Binding PhraseItems.Items}" SelectedItem="{Binding PhraseItems.SelectedItem}" IsReadOnly="True">
+                                <b:Interaction.Triggers>
+                                    <b:EventTrigger EventName="MouseDoubleClick">
+                                        <b:CallMethodAction TargetObject="{Binding}" MethodName="PhraseDoubleClick"/>
+                                    </b:EventTrigger>
+                                </b:Interaction.Triggers>
+                            </DataGrid>
+                        </GroupBox>
+                        <GroupBox Grid.Row="1" Header="フレーズ">
+                            <DataGrid Margin="5" ItemsSource="{Binding PhraseItems.SelectedItem.Words.Items}" SelectedItem="{Binding PhraseItems.SelectedItem.Words.SelectedItem}" IsReadOnly="True">
+                                <b:Interaction.Triggers>
+                                    <b:EventTrigger EventName="MouseDoubleClick">
+                                        <b:CallMethodAction TargetObject="{Binding}" MethodName="WordDoubleClick"/>
+                                    </b:EventTrigger>
+                                </b:Interaction.Triggers>
+                            </DataGrid>
+                        </GroupBox>
+                        <StackPanel Grid.Row="2" Orientation="Horizontal">
+                            <Button Margin="5" Content="1行再生">
+                                <b:Interaction.Triggers>
+                                    <b:EventTrigger EventName="Click">
+                                        <b:CallMethodAction TargetObject="{Binding}" MethodName="StartVoice"/>
+                                    </b:EventTrigger>
+                                </b:Interaction.Triggers>
+                            </Button>
+                            <Button Margin="5" Content="連続再生">
+                                <b:Interaction.Triggers>
+                                    <b:EventTrigger EventName="Click">
+                                        <b:CallMethodAction TargetObject="{Binding}" MethodName="StartVoice"/>
+                                    </b:EventTrigger>
+                                </b:Interaction.Triggers>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+                </TabItem>
+            </TabControl>
         </GroupBox>
 
         <Grid Margin="5" Grid.Column="1">
@@ -70,10 +117,16 @@
             <GroupBox Header="Question">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="2*"/>
                         <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="auto"/>
                     </Grid.ColumnDefinitions>
-                    <TextBox x:Name="question_txt" TextWrapping="WrapWithOverflow" Margin="5,5,5,5" Text="{Binding TangoCollection.TangoList.SelectedItem.Querstion, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True"/>
+                    <TextBox x:Name="question_txt" TextWrapping="WrapWithOverflow" Margin="5,5,5,5" Text="{Binding TangoCollection.TangoList.SelectedItem.Querstion, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True">
+                        <b:Interaction.Triggers>
+                            <b:EventTrigger EventName="TextChanged">
+                                <b:CallMethodAction TargetObject="{Binding}" MethodName="QuestionChanged"/>
+                            </b:EventTrigger>
+                        </b:Interaction.Triggers>
+                    </TextBox>
                     <Grid VerticalAlignment="Center" Grid.Column="1">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="auto"/>
@@ -83,10 +136,23 @@
                             <RowDefinition Height="auto"/>
                             <RowDefinition Height="auto"/>
                         </Grid.RowDefinitions>
-                        <TextBox Margin="5,5,5,5" Grid.Row="0" Text="{Binding TangoCollection.TangoList.SelectedItem.Selections[0], Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                        <TextBox Margin="5,5,5,5" Grid.Row="1" Text="{Binding TangoCollection.TangoList.SelectedItem.Selections[1], Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                        <TextBox Margin="5,5,5,5" Grid.Row="2" Text="{Binding TangoCollection.TangoList.SelectedItem.Selections[2], Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                        <TextBox Margin="5,5,5,5" Grid.Row="3" Text="{Binding TangoCollection.TangoList.SelectedItem.Selections[3], Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="A:" VerticalAlignment="Center"/>
+                            <TextBox Width="80" Margin="5,5,5,5" Text="{Binding TangoCollection.TangoList.SelectedItem.Selections[0], Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                        <StackPanel Grid.Row="1" Orientation="Horizontal">
+                            <TextBlock Text="B:" VerticalAlignment="Center"/>
+                            <TextBox Width="80" Margin="5,5,5,5" Text="{Binding TangoCollection.TangoList.SelectedItem.Selections[1], Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                        <StackPanel Grid.Row="2" Orientation="Horizontal">
+                            <TextBlock Text="C:" VerticalAlignment="Center"/>
+                            <TextBox Width="80" Margin="5,5,5,5" Text="{Binding TangoCollection.TangoList.SelectedItem.Selections[2], Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                        <StackPanel Grid.Row="3" Orientation="Horizontal">
+                            <TextBlock Text="D:" VerticalAlignment="Center"/>
+                            <TextBox Width="80" Margin="5,5,5,5" Text="{Binding TangoCollection.TangoList.SelectedItem.Selections[3], Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
                         <Button Grid.Row="4" Content="合成音声">
                             <b:Interaction.Triggers>
                                 <b:EventTrigger EventName="Click">
