@@ -372,31 +372,6 @@ namespace ZeikomiTango.ViewModels
         }
         #endregion
 
-        #region 合成音声の開始
-        /// <summary>
-        /// 合成音声の開始
-        /// </summary>
-        public void StartVoice()
-        {
-            try
-            {
-                var synthesizer = new SpeechSynthesizer();
-                synthesizer.SetOutputToDefaultAudioDevice();
-                synthesizer.SelectVoice("Microsoft Zira Desktop");
-                synthesizer.Rate = this.Rate;
-                synthesizer.Speak(this.TangoCollection.TangoList.SelectedItem.Querstion);
-                synthesizer.Speak(this.TangoCollection.TangoList.SelectedItem.Selections[0]);
-                synthesizer.Speak(this.TangoCollection.TangoList.SelectedItem.Selections[1]);
-                synthesizer.Speak(this.TangoCollection.TangoList.SelectedItem.Selections[2]);
-                synthesizer.Speak(this.TangoCollection.TangoList.SelectedItem.Selections[3]);
-            }
-            catch
-            {
-
-            }
-        }
-        #endregion
-
         #region Questionの選択変更処理
         /// <summary>
         /// Questionの選択変更処理
