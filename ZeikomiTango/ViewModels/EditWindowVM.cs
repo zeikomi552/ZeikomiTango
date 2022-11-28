@@ -338,7 +338,7 @@ namespace ZeikomiTango.ViewModels
                                 }
                             case Key.V:
                                 {
-                                    StartVoice();
+                                    PhraseVoice();
                                     break;
                                 }
                         }
