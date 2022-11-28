@@ -68,7 +68,7 @@ namespace ZeikomiTango.Models
         public void SelectionChanged()
         {
             this.Words.Items.Clear();
-            var tmp = this.Phrase.Split(" ");
+            var tmp = this.Phrase.Split(" ").Distinct().OrderBy(x => x);
             foreach (var word in tmp)
             {
                 this.Words.Items.Add(new WordM()

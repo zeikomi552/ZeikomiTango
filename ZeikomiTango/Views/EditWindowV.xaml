@@ -70,13 +70,37 @@
                             <RowDefinition Height="auto"/>
                         </Grid.RowDefinitions>
                         <GroupBox Header="フレーズ">
-                            <DataGrid Margin="5" ItemsSource="{Binding PhraseItems.Items}" SelectedItem="{Binding PhraseItems.SelectedItem}" IsReadOnly="True">
-                                <b:Interaction.Triggers>
-                                    <b:EventTrigger EventName="MouseDoubleClick">
-                                        <b:CallMethodAction TargetObject="{Binding}" MethodName="PhraseDoubleClick"/>
-                                    </b:EventTrigger>
-                                </b:Interaction.Triggers>
-                            </DataGrid>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <DataGrid Margin="5,5,5,5" ItemsSource="{Binding PhraseItems.Items}" SelectedItem="{Binding PhraseItems.SelectedItem}" IsReadOnly="True">
+                                    <b:Interaction.Triggers>
+                                        <b:EventTrigger EventName="MouseDoubleClick">
+                                            <b:CallMethodAction TargetObject="{Binding}" MethodName="PhraseDoubleClick"/>
+                                        </b:EventTrigger>
+                                    </b:Interaction.Triggers>
+                                </DataGrid>
+                                <StackPanel Grid.Row="1" Orientation="Horizontal">
+                                    <Button Margin="5" Content="1行再生">
+                                        <b:Interaction.Triggers>
+                                            <b:EventTrigger EventName="Click">
+                                                <b:CallMethodAction TargetObject="{Binding}" MethodName="PhraseVoice"/>
+                                            </b:EventTrigger>
+                                        </b:Interaction.Triggers>
+                                    </Button>
+                                    <ToggleButton IsChecked="{Binding IsPressVoice}" Margin="5" Content="連続再生">
+                                        <b:Interaction.Triggers>
+                                            <b:EventTrigger EventName="Checked">
+                                                <b:CallMethodAction TargetObject="{Binding}" MethodName="PhraseVoiceContinue"/>
+                                            </b:EventTrigger>
+                                        </b:Interaction.Triggers>
+                                    </ToggleButton>
+                                    <TextBox TextAlignment="Center" VerticalAlignment="Center" Width="50" Grid.Row="5" Text="{Binding Rate}"/>
+
+                                </StackPanel>
+                            </Grid>
                         </GroupBox>
                         <GroupBox Grid.Row="1" Header="フレーズ">
                             <DataGrid Margin="5" ItemsSource="{Binding PhraseItems.SelectedItem.Words.Items}" SelectedItem="{Binding PhraseItems.SelectedItem.Words.SelectedItem}" IsReadOnly="True">
@@ -87,22 +111,7 @@
                                 </b:Interaction.Triggers>
                             </DataGrid>
                         </GroupBox>
-                        <StackPanel Grid.Row="2" Orientation="Horizontal">
-                            <Button Margin="5" Content="1行再生">
-                                <b:Interaction.Triggers>
-                                    <b:EventTrigger EventName="Click">
-                                        <b:CallMethodAction TargetObject="{Binding}" MethodName="StartVoice"/>
-                                    </b:EventTrigger>
-                                </b:Interaction.Triggers>
-                            </Button>
-                            <Button Margin="5" Content="連続再生">
-                                <b:Interaction.Triggers>
-                                    <b:EventTrigger EventName="Click">
-                                        <b:CallMethodAction TargetObject="{Binding}" MethodName="StartVoice"/>
-                                    </b:EventTrigger>
-                                </b:Interaction.Triggers>
-                            </Button>
-                        </StackPanel>
+
                     </Grid>
                 </TabItem>
             </TabControl>
@@ -153,14 +162,6 @@
                             <TextBlock Text="D:" VerticalAlignment="Center"/>
                             <TextBox Width="80" Margin="5,5,5,5" Text="{Binding TangoCollection.TangoList.SelectedItem.Selections[3], Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
-                        <Button Grid.Row="4" Content="合成音声">
-                            <b:Interaction.Triggers>
-                                <b:EventTrigger EventName="Click">
-                                    <b:CallMethodAction TargetObject="{Binding}" MethodName="StartVoice"/>
-                                </b:EventTrigger>
-                            </b:Interaction.Triggers>
-                        </Button>
-                        <TextBox TextAlignment="Center" Grid.Row="5" Text="{Binding Rate}"/>
                     </Grid>
                 </Grid>
             </GroupBox>

@@ -48,6 +48,40 @@ namespace ZeikomiTango.ViewModels
         }
         #endregion
 
+        #region 音声発生中[IsVoice]プロパティ
+        /// <summary>
+        /// 音声発生中[IsVoice]プロパティ用変数
+        /// </summary>
+        bool _IsVoice = false;
+        #endregion
+
+        #region 音声再生命令中[IsPressVoice]プロパティ
+        /// <summary>
+        /// 音声再生命令中[IsPressVoice]プロパティ用変数
+        /// </summary>
+        bool _IsPressVoice = false;
+        /// <summary>
+        /// 音声再生命令中[IsPressVoice]プロパティ
+        /// </summary>
+        public bool IsPressVoice
+        {
+            get
+            {
+                return _IsPressVoice;
+            }
+            set
+            {
+                if (!_IsPressVoice.Equals(value))
+                {
+                    _IsPressVoice = value;
+                    NotifyPropertyChanged("IsPressVoice");
+                }
+            }
+        }
+        #endregion
+
+
+
         #region SpeachRate[Rate]プロパティ
         /// <summary>
         /// SpeachRate[Rate]プロパティ用変数
@@ -371,22 +405,26 @@ namespace ZeikomiTango.ViewModels
         {
             try
             {
-                // フレーズに分解する
-                var list = this.TangoCollection.SelectedItem.Querstion.Replace("\r", "").Split("\n");
-
-                // フレーズリストをクリア
-                this.PhraseItems.Items.Clear();
-
-                // リスト数文まわす
-                foreach (var tmp in list)
+                if (this.TangoCollection.SelectedItem != null && this.TangoCollection.SelectedItem.Querstion != null)
                 {
-                    // フレーズリストに追加
-                    this.PhraseItems.Items.Add(new PhraseM()
+                    // フレーズに分解する
+                    var list = this.TangoCollection.SelectedItem.Querstion.Replace("\r", "").Split("\n");
+
+                    // フレーズリストをクリア
+                    this.PhraseItems.Items.Clear();
+
+                    // リスト数文まわす
+                    foreach (var tmp in list)
                     {
-                        Phrase = tmp
+                        // フレーズリストに追加
+                        this.PhraseItems.Items.Add(new PhraseM()
+                        {
+                            Phrase = tmp
+                        }
+                        );
                     }
-                    );
                 }
+                
             }
             catch
             {
@@ -426,7 +464,11 @@ namespace ZeikomiTango.ViewModels
         {
             try
             {
-                PhraseVoice(this.PhraseItems.SelectedItem.Phrase);  // フレーズ再生
+                // nullチェック
+                if(this.PhraseItems.SelectedItem != null)
+                {
+                    PhraseVoice(this.PhraseItems.SelectedItem.Phrase);  // フレーズ再生
+                }
             }
             catch
             {
@@ -438,10 +480,20 @@ namespace ZeikomiTango.ViewModels
         {
             try
             {
-                foreach (var tmp in this.PhraseItems.Items)
+                Task.Run(() =>
                 {
-                    PhraseVoice(tmp.Phrase);    // フレーズ再生
-                }
+                    foreach (var tmp in this.PhraseItems.Items)
+                    {
+                        if (this.IsPressVoice)
+                        {
+                            PhraseVoice(tmp.Phrase);    // フレーズ再生
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                });
             }
             catch
             {
@@ -457,11 +509,17 @@ namespace ZeikomiTango.ViewModels
         {
             try
             {
-                var synthesizer = new SpeechSynthesizer();
-                synthesizer.SetOutputToDefaultAudioDevice();
-                synthesizer.SelectVoice("Microsoft Zira Desktop");
-                synthesizer.Rate = this.Rate;
-                synthesizer.Speak(phrase);
+                // 音声が再生中でない場合のみ実行
+                if (!this._IsVoice)
+                {
+                    this._IsVoice = true;
+                    var synthesizer = new SpeechSynthesizer();
+                    synthesizer.SetOutputToDefaultAudioDevice();
+                    synthesizer.SelectVoice("Microsoft Zira Desktop");
+                    synthesizer.Rate = this.Rate;
+                    synthesizer.Speak(phrase);
+                    this._IsVoice = false;
+                }
             }
             catch
             {
@@ -488,7 +546,7 @@ namespace ZeikomiTango.ViewModels
                     var deepl_url_base = "https://www.deepl.com/ja/translator#en/ja/{0}";   // DeepLのURL
 
                     // nullチェック
-                    if (this.PhraseItems.SelectedItem != null && this.PhraseItems.SelectedItem.Words.SelectedItem != null)
+                    if (this.PhraseItems.SelectedItem != null)
                     {
                         string url = string.Format(deepl_url_base, this.PhraseItems.SelectedItem.Phrase);   // URL作成
 
