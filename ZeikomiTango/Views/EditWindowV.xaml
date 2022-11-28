@@ -4,10 +4,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        TitleCharacterCasing="Normal"
         xmlns:b="http://schemas.microsoft.com/xaml/behaviors" 
         xmlns:local="clr-namespace:ZeikomiTango.Views"
-        xmlns:ViewModels="clr-namespace:ZeikomiTango.ViewModels" x:Class="ZeikomiTango.Views.EditWindowV"
+        xmlns:ViewModels="clr-namespace:ZeikomiTango.ViewModels" xmlns:Wpf="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
+        TitleCharacterCasing="Normal"
+        x:Class="ZeikomiTango.Views.EditWindowV"
         mc:Ignorable="d"
         Title="EditWindowV" Height="600" Width="800">
     <mah:MetroWindow.DataContext>
@@ -17,11 +18,15 @@
         <b:EventTrigger EventName="PreviewKeyDown">
             <b:CallMethodAction TargetObject="{Binding}" MethodName="KeyDown"/>
         </b:EventTrigger>
+        <b:EventTrigger>
+            <b:CallMethodAction TargetObject="{Binding}" MethodName="Init"/>
+        </b:EventTrigger>
     </b:Interaction.Triggers>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="2*"/>
         </Grid.ColumnDefinitions>
 
         <GroupBox Margin="5" Header="リスト">
@@ -105,5 +110,6 @@
             </GroupBox>
 
         </Grid>
+        <Wpf:WebView2 x:Name="WebView2Ctrl" Margin="5" Grid.Column="2"/>
     </Grid>
 </mah:MetroWindow>

@@ -85,7 +85,11 @@ namespace ZeikomiTango.ViewModels
         {
             try
             {
-
+                var wnd = sender as EditWindowV;
+                if(wnd !=null)
+                {
+                    wnd.WebView2Ctrl.EnsureCoreWebView2Async(null);
+                }
             }
             catch (Exception ex)
             {
@@ -158,86 +162,118 @@ namespace ZeikomiTango.ViewModels
             {
                 var wnd = sender as EditWindowV;
 
-                var key_eve = e as KeyEventArgs;
-
-                if (key_eve!.KeyboardDevice.IsKeyDown(Key.LeftAlt) || key_eve!.KeyboardDevice.IsKeyDown(Key.RightAlt))
+                if (wnd != null)
                 {
-                    switch (key_eve.SystemKey)
+                    var key_eve = e as KeyEventArgs;
+                    var url_base = "https://www.deepl.com/ja/translator#en/ja/{0}";
+
+                    if (key_eve!.KeyboardDevice.IsKeyDown(Key.LeftAlt) || key_eve!.KeyboardDevice.IsKeyDown(Key.RightAlt))
                     {
-                        case Key.Down:
-                            {
-                                int index = this.TangoCollection.TangoList.IndexOf(this.TangoCollection.SelectedItem);
+                        switch (key_eve.SystemKey)
+                        {
+                            case Key.Down:
+                                {
+                                    int index = this.TangoCollection.TangoList.IndexOf(this.TangoCollection.SelectedItem);
 
-                                if (this.TangoCollection.TangoList.Count > index + 1)
-                                {
-                                    this.TangoCollection.TangoList.SelectedItem = this.TangoCollection.TangoList.ElementAt(index + 1);
+                                    if (this.TangoCollection.TangoList.Count > index + 1)
+                                    {
+                                        this.TangoCollection.TangoList.SelectedItem = this.TangoCollection.TangoList.ElementAt(index + 1);
+                                    }
+                                    else
+                                    {
+                                        this.TangoCollection.Add(new TangoM());
+                                    }
+                                    break;
                                 }
-                                else
+                            case Key.Up:
                                 {
-                                    this.TangoCollection.Add(new TangoM());
-                                }
-                                break;
-                            }
-                        case Key.Up:
-                            {
-                                int index = this.TangoCollection.TangoList.IndexOf(this.TangoCollection.SelectedItem);
+                                    int index = this.TangoCollection.TangoList.IndexOf(this.TangoCollection.SelectedItem);
 
-                                if (index - 1 >= 0)
-                                {
-                                    this.TangoCollection.TangoList.SelectedItem = this.TangoCollection.TangoList.ElementAt(index - 1);
+                                    if (index - 1 >= 0)
+                                    {
+                                        this.TangoCollection.TangoList.SelectedItem = this.TangoCollection.TangoList.ElementAt(index - 1);
+                                    }
+                                    break;
                                 }
-                                break;
-                            }
-                        case Key.Enter:
-                            {
-                                wnd!.question_txt.Focus();
-                                break;
-                            }
-                        case Key.D1:
-                            {
-                                OpenURL($"https://translate.google.co.jp/?hl=ja&sl=en&tl=ja&text={this.TangoCollection.TangoList.SelectedItem.Selections[0]}%0A&op=translate");
-                                break;
-                            }
-                        case Key.D2:
-                            {
-                                OpenURL($"https://translate.google.co.jp/?hl=ja&sl=en&tl=ja&text={this.TangoCollection.TangoList.SelectedItem.Selections[1]}%0A&op=translate");
-                                break;
-                            }
-                        case Key.D3:
-                            {
-                                OpenURL($"https://translate.google.co.jp/?hl=ja&sl=en&tl=ja&text={this.TangoCollection.TangoList.SelectedItem.Selections[2]}%0A&op=translate");
-                                break;
-                            }
-                        case Key.D4:
-                            {
-                                OpenURL($"https://translate.google.co.jp/?hl=ja&sl=en&tl=ja&text={this.TangoCollection.TangoList.SelectedItem.Selections[3]}%0A&op=translate");
-                                break;
-                            }
-                        case Key.V:
-                            {
-                                StartVoice();
-                                break;
-                            }
+                            case Key.Enter:
+                                {
+                                    wnd!.question_txt.Focus();
+                                    break;
+                                }
+                            case Key.D1:
+                                {
+                                    if (wnd != null)
+                                    {
+                                        string url = string.Format(url_base, this.TangoCollection.TangoList.SelectedItem.Selections[0]);
+                                        if (wnd.WebView2Ctrl != null && wnd.WebView2Ctrl.CoreWebView2 != null)
+                                        {
+                                            wnd.WebView2Ctrl.CoreWebView2.Navigate(url);
+                                        }
+                                    }
+                                    break;
+                                }
+                            case Key.D2:
+                                {
+                                    string url = $"https://translate.google.co.jp/?hl=ja&sl=en&tl=ja&text={this.TangoCollection.TangoList.SelectedItem.Selections[1]}%0A&op=translate";
+                                    if (wnd.WebView2Ctrl != null && wnd.WebView2Ctrl.CoreWebView2 != null)
+                                    {
+                                        wnd.WebView2Ctrl.CoreWebView2.Navigate(url);
+                                    }
+                                    break;
+                                }
+                            case Key.D3:
+                                {
+                                    string url = $"https://translate.google.co.jp/?hl=ja&sl=en&tl=ja&text={this.TangoCollection.TangoList.SelectedItem.Selections[2]}%0A&op=translate";
+                                    if (wnd.WebView2Ctrl != null && wnd.WebView2Ctrl.CoreWebView2 != null)
+                                    {
+                                        wnd.WebView2Ctrl.CoreWebView2.Navigate(url);
+                                    }
+                                    break;
+                                }
+                            case Key.D4:
+                                {
+                                    string url = $"https://translate.google.co.jp/?hl=ja&sl=en&tl=ja&text={this.TangoCollection.TangoList.SelectedItem.Selections[3]}%0A&op=translate";
+                                    if (wnd.WebView2Ctrl != null && wnd.WebView2Ctrl.CoreWebView2 != null)
+                                    {
+                                        wnd.WebView2Ctrl.CoreWebView2.Navigate(url);
+                                    }
+                                    break;
+                                }
+                            case Key.D0:
+                                {
+                                    string url = $"https://translate.google.co.jp/?hl=ja&sl=en&tl=ja&text={this.TangoCollection.TangoList.SelectedItem.Querstion}%0A&op=translate";
+                                    if (wnd.WebView2Ctrl != null && wnd.WebView2Ctrl.CoreWebView2 != null)
+                                    {
+                                        wnd.WebView2Ctrl.CoreWebView2.Navigate(url);
+                                    }
+                                    break;
+                                }
+                            case Key.V:
+                                {
+                                    StartVoice();
+                                    break;
+                                }
+                        }
                     }
-                }
-                if (key_eve!.KeyboardDevice.IsKeyDown(Key.LeftCtrl) || key_eve!.KeyboardDevice.IsKeyDown(Key.RightCtrl))
-                {
-                    switch (key_eve.Key)
+                    if (key_eve!.KeyboardDevice.IsKeyDown(Key.LeftCtrl) || key_eve!.KeyboardDevice.IsKeyDown(Key.RightCtrl))
                     {
-                        case Key.S:
-                            {
-                                if (File.Exists(this.TangoCollection.FilePath))
+                        switch (key_eve.Key)
+                        {
+                            case Key.S:
                                 {
-                                    this.TangoCollection.SaveExcel(this.TangoCollection.FilePath);
-                                }
-                                else
-                                {
-                                    Save();
+                                    if (File.Exists(this.TangoCollection.FilePath))
+                                    {
+                                        this.TangoCollection.SaveExcel(this.TangoCollection.FilePath);
+                                    }
+                                    else
+                                    {
+                                        Save();
+                                    }
+
+                                    break;
                                 }
 
-                                break;
-                            }
-
+                        }
                     }
                 }
             }
