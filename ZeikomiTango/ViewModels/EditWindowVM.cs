@@ -193,6 +193,11 @@ namespace ZeikomiTango.ViewModels
                     this.VoiceList.SelectedItem = this.VoiceList.Items.FirstOrDefault()!;
                 }
 
+                // nullチェック
+                if (this.PhraseItems.Items.FirstOrDefault() != null)
+                {
+                    this.PhraseItems.SelectedItem = this.PhraseItems.Items.FirstOrDefault()!;
+                }
 
             }
             catch (Exception ex)
@@ -431,12 +436,15 @@ namespace ZeikomiTango.ViewModels
                     // リスト数文まわす
                     foreach (var tmp in list)
                     {
-                        // フレーズリストに追加
-                        this.PhraseItems.Items.Add(new PhraseM()
+                        if(tmp.Trim().Length > 0)
                         {
-                            Phrase = tmp
+                            // フレーズリストに追加
+                            this.PhraseItems.Items.Add(new PhraseM()
+                            {
+                                Phrase = tmp
+                            }
+                            );
                         }
-                        );
                     }
                 }
                 
@@ -654,6 +662,18 @@ namespace ZeikomiTango.ViewModels
             catch
             {
                 
+            }
+        }
+
+        public void PeriodLineBreak()
+        {
+            try
+            {
+                this.TangoCollection.SelectedItem.Querstion = this.TangoCollection.SelectedItem.Querstion.Replace(".", ".\r\n").Replace(".\r\n\"", ".\"");
+            }
+            catch
+            {
+
             }
         }
     }
