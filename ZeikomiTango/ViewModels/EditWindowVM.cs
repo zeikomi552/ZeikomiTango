@@ -49,6 +49,33 @@ namespace ZeikomiTango.ViewModels
         }
         #endregion
 
+        #region インストールされている音声リスト[VoiceList]プロパティ
+        /// <summary>
+        /// インストールされている音声リスト[VoiceList]プロパティ用変数
+        /// </summary>
+        ModelList<InstalledVoice> _VoiceList = new ModelList<InstalledVoice>();
+        /// <summary>
+        /// インストールされている音声リスト[VoiceList]プロパティ
+        /// </summary>
+        public ModelList<InstalledVoice> VoiceList
+        {
+            get
+            {
+                return _VoiceList;
+            }
+            set
+            {
+                if (_VoiceList == null || !_VoiceList.Equals(value))
+                {
+                    _VoiceList = value;
+                    NotifyPropertyChanged("VoiceList");
+                }
+            }
+        }
+        #endregion
+
+
+
         #region 音声発生中[IsVoice]プロパティ
         /// <summary>
         /// 音声発生中[IsVoice]プロパティ用変数
@@ -150,6 +177,23 @@ namespace ZeikomiTango.ViewModels
                 {
                     wnd.WebView2Ctrl.EnsureCoreWebView2Async(null);
                 }
+
+                var synthesizer = new SpeechSynthesizer();
+                var installedVoices = synthesizer.GetInstalledVoices();
+                this.VoiceList.Items.Clear();
+
+                foreach (var voice in installedVoices)
+                {
+                    this.VoiceList.Items.Add(voice);
+                }
+
+                // nullチェック
+                if (this.VoiceList.Items.FirstOrDefault() != null)
+                {
+                    this.VoiceList.SelectedItem = this.VoiceList.Items.FirstOrDefault()!;
+                }
+
+
             }
             catch (Exception ex)
             {
@@ -502,8 +546,11 @@ namespace ZeikomiTango.ViewModels
                 {
                     this._IsVoice = true;
                     var synthesizer = new SpeechSynthesizer();
+                    var tmp = synthesizer.GetInstalledVoices();
+
                     synthesizer.SetOutputToDefaultAudioDevice();
-                    synthesizer.SelectVoice("Microsoft Zira Desktop");
+
+                    synthesizer.SelectVoice(this.VoiceList.SelectedItem.VoiceInfo.Name);
                     synthesizer.Rate = this.Rate;
                     synthesizer.Speak(phrase);
                     this._IsVoice = false;
@@ -590,5 +637,24 @@ namespace ZeikomiTango.ViewModels
             }
         }
         #endregion
+
+        public void SelectedItemChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                // ウィンドウを取得
+                var wnd = VisualTreeHelperWrapper.GetWindow<EditWindowV>(sender) as EditWindowV;
+
+                if (wnd != null)
+                {
+                    wnd.phrase_dg.ScrollIntoView(wnd.phrase_dg.Items[wnd.phrase_dg.SelectedIndex]); //scroll to last
+                    wnd.phrase_dg.UpdateLayout();
+                }
+            }
+            catch
+            {
+                
+            }
+        }
     }
 }

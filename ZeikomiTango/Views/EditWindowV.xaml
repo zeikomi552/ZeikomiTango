@@ -75,10 +75,13 @@
                                     <RowDefinition Height="*"/>
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
-                                <DataGrid Margin="5,5,5,5" ItemsSource="{Binding PhraseItems.Items}" SelectedItem="{Binding PhraseItems.SelectedItem}" IsReadOnly="True">
+                                <DataGrid x:Name="phrase_dg" Margin="5,5,5,5" ItemsSource="{Binding PhraseItems.Items}" SelectedItem="{Binding PhraseItems.SelectedItem}" IsReadOnly="True">
                                     <b:Interaction.Triggers>
                                         <b:EventTrigger EventName="MouseDoubleClick">
                                             <b:CallMethodAction TargetObject="{Binding}" MethodName="PhraseDoubleClick"/>
+                                        </b:EventTrigger>
+                                        <b:EventTrigger EventName="SelectionChanged">
+                                            <b:CallMethodAction TargetObject="{Binding}" MethodName="SelectedItemChanged"/>
                                         </b:EventTrigger>
                                     </b:Interaction.Triggers>
                                 </DataGrid>
@@ -98,11 +101,12 @@
                                         </b:Interaction.Triggers>
                                     </ToggleButton>
                                     <TextBox TextAlignment="Center" VerticalAlignment="Center" Width="50" Grid.Row="5" Text="{Binding Rate}"/>
+                                    <ComboBox ItemsSource="{Binding VoiceList.Items}" DisplayMemberPath="VoiceInfo.Name" SelectedItem="{Binding VoiceList.SelectedItem}"/>
 
                                 </StackPanel>
                             </Grid>
                         </GroupBox>
-                        <GroupBox Grid.Row="1" Header="フレーズ">
+                        <GroupBox Grid.Row="1" Header="単語">
                             <DataGrid Margin="5" ItemsSource="{Binding PhraseItems.SelectedItem.Words.Items}" SelectedItem="{Binding PhraseItems.SelectedItem.Words.SelectedItem}" IsReadOnly="True">
                                 <b:Interaction.Triggers>
                                     <b:EventTrigger EventName="MouseDoubleClick">
