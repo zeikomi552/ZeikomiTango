@@ -1,4 +1,5 @@
-﻿using DocumentFormat.OpenXml.Presentation;
+﻿using DocumentFormat.OpenXml.Drawing.Charts;
+using DocumentFormat.OpenXml.Presentation;
 using MaterialDesignColors.Recommended;
 using Microsoft.Win32;
 using MVVMCore.BaseClass;
@@ -336,11 +337,6 @@ namespace ZeikomiTango.ViewModels
                                     }
                                     break;
                                 }
-                            case Key.V:
-                                {
-                                    PhraseVoice();
-                                    break;
-                                }
                         }
                     }
                     if (key_eve!.KeyboardDevice.IsKeyDown(Key.LeftCtrl) || key_eve!.KeyboardDevice.IsKeyDown(Key.RightCtrl))
@@ -451,21 +447,37 @@ namespace ZeikomiTango.ViewModels
         }
         #endregion
 
+        #region 合成音声を連続で再生する
+        /// <summary>
+        /// 合成音声を連続で再生する
+        /// </summary>
         public void PhraseVoiceContinue()
         {
             try
             {
                 Task.Run(() =>
                 {
-                    foreach (var tmp in this.PhraseItems.Items)
+                    int index = 0;
+                    while (true)
                     {
-                        if (this.IsPressVoice)
+                        if (index < this.PhraseItems.Count)
                         {
-                            PhraseVoice(tmp.Phrase);    // フレーズ再生
+                            var tmp = this.PhraseItems.ElementAt(index);
+
+                            this.PhraseItems.SelectedItem = tmp;
+                            if (this.IsPressVoice)
+                            {
+                                PhraseVoice(tmp.Phrase);    // フレーズ再生
+                            }
+                            else
+                            {
+                                break;
+                            }
+                            index++;
                         }
                         else
                         {
-                            break;
+                            index = 0;
                         }
                     }
                 });
@@ -474,6 +486,7 @@ namespace ZeikomiTango.ViewModels
             {
             }
         }
+        #endregion
 
         #region フレーズを音声再生する
         /// <summary>
